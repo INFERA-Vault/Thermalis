@@ -1,0 +1,154 @@
+# ==========================================
+# Environments & Virtual Environments
+# ==========================================
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# ==========================================
+# Python Artifacts & Cache
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# ==========================================
+# Frontend & Node Artifacts
+# ==========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+lerna-debug.log*
+.next/
+out/
+.nuxt/
+dist/
+dist-ssr/
+*.local
+
+# ==========================================
+# Large Geospatial, Satellite & Raw Data
+# ==========================================
+data/raw/*
+!data/raw/**/.gitkeep
+data/processed/*
+!data/processed/**/.gitkeep
+
+# Raster, Satellite, and Vector formats
+*.tif
+*.tiff
+*.geotiff
+*.nc
+*.nc4
+*.hdf
+*.hdf5
+*.h5
+*.jp2
+*.SAFE/
+*.zip
+*.tar.gz
+*.tgz
+*.gz
+*.bz2
+*.7z
+*.gpkg
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.geojson
+*.kml
+*.kmz
+*.parquet
+*.feather
+*.csv.gz
+
+# ==========================================
+# Machine Learning Weights & Checkpoints
+# ==========================================
+ml/models/*
+!ml/models/**/.gitkeep
+*.pt
+*.pth
+*.onnx
+*.pkl
+*.pickle
+*.joblib
+*.bin
+*.model
+*.ckpt
+*.weights
+*.pb
+checkpoints/
+wandb/
+runs/
+lightning_logs/
+.tensorboard/
+
+# ==========================================
+# Logs, Temp & Generated Outputs
+# ==========================================
+*.log
+logs/
+*.tmp
+*.temp
+tmp/
+temp/
+outputs/
+reports/
+
+# ==========================================
+# OS & IDE Files
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.sublime-workspace
+*.sublime-project

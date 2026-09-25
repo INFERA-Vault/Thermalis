@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: geospatial_postgis_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: geospatial_fires_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d geospatial_fires_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgis_data:
+    name: geospatial_postgis_data
