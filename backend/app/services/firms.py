@@ -75,21 +75,28 @@ class FIRMSService:
             request.date or "latest"
         )
 
-        try:
-            async with httpx.AsyncClient(timeout=self.timeout) as client:
-                response = await client.get(url)
+        import urllib.request
+        import asyncio
 
-            if response.status_code == 401 or response.status_code == 403:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            
+            def fetch():
+                with urllib.request.urlopen(req, timeout=self.timeout) as response:
+                    return response.read().decode("utf-8"), response.status
+                    
+            csv_text, status_code = await asyncio.to_thread(fetch)
+
+            if status_code == 401 or status_code == 403:
                 logger.error("NASA FIRMS authentication failed. Check FIRMS_API_KEY.")
                 raise AppException("Invalid or unauthorized NASA FIRMS API key.", status_code=401)
-            elif response.status_code != 200:
-                logger.error("NASA FIRMS request failed with HTTP %d: %s", response.status_code, response.text[:200])
+            elif status_code != 200:
+                logger.error("NASA FIRMS request failed with HTTP %d: %s", status_code, csv_text[:200])
                 raise AppException(
-                    f"NASA FIRMS API returned error status {response.status_code}: {response.text[:100]}",
-                    status_code=response.status_code
+                    f"NASA FIRMS API returned error status {status_code}: {csv_text[:100]}",
+                    status_code=status_code
                 )
 
-            csv_text = response.text
             # FIRMS returns an error string if invalid map key or parameters: e.g. "Invalid MAP_KEY" or "Error: ..."
             if "Invalid MAP_KEY" in csv_text or "Transaction limit" in csv_text:
                 logger.error("NASA FIRMS error response: %s", csv_text.strip())
@@ -98,9 +105,15 @@ class FIRMSService:
             logger.info("FIRMS request completed successfully (%d bytes received)", len(csv_text))
             return csv_text
 
-        except httpx.RequestError as exc:
-            logger.error("Network error communicating with NASA FIRMS API: %s", exc)
-            raise AppException(f"Unable to connect to NASA FIRMS API: {str(exc)}", status_code=502)
+        except Exception as exc:
+            error_body = ""
+            if hasattr(exc, "read"):
+                try:
+                    error_body = exc.read().decode("utf-8")
+                except:
+                    pass
+            logger.error("Network error communicating with NASA FIRMS API: %s %s", exc, error_body)
+            raise AppException(f"Unable to connect to NASA FIRMS API: {str(exc)} {error_body}", status_code=502)
 
     def parse_and_validate(self, raw_csv: str, source: str) -> Tuple[List[FIRMSEventRecord], int, List[str]]:
         """
@@ -326,13 +339,28 @@ class FIRMSService:
 
         # 4. Persist to Database if session available
         persisted_count = 0
+        new_event_ids = []
         if db is not None and unique_records:
             try:
                 orm_events = self.to_thermal_events(unique_records)
                 db.add_all(orm_events)
                 db.commit()
+                
+                # Fetch back to get IDs
+                for event in orm_events:
+                    db.refresh(event)
+                    new_event_ids.append(event.id)
+                    
                 persisted_count = len(orm_events)
                 logger.info("Persisted %d new ThermalEvent records to database", persisted_count)
+                
+                # 5. Generate Alerts
+                if new_event_ids:
+                    from backend.app.services.alert_service import AlertService
+                    alert_svc = AlertService()
+                    alerts = alert_svc.process_new_events(db, new_event_ids)
+                    logger.info("Generated %d alerts for %d new events", len(alerts), len(new_event_ids))
+                    
             except Exception as exc:
                 logger.error("Failed to persist ThermalEvents to database: %s", exc)
                 db.rollback()

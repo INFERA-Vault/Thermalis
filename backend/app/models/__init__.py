@@ -11,6 +11,7 @@ from backend.app.models.satellite_observation import SatelliteObservation
 from backend.app.models.event_feature import EventFeature
 from backend.app.models.classification import Classification
 from backend.app.models.risk_assessment import RiskAssessment
+from backend.app.models.alert import Alert
 
 __all__ = [
     "Base",
@@ -21,4 +22,5 @@ __all__ = [
     "EventFeature",
     "Classification",
     "RiskAssessment",
+    "Alert",
 ]

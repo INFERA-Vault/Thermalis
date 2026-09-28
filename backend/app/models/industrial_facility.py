@@ -5,7 +5,7 @@ Represents an infrastructure/industrial installation (OSM or custom spatial inve
 
 from datetime import datetime
 from typing import Any, Dict, List, Optional
-from sqlalchemy import BigInteger, Column, DateTime, Index, String, func
+from sqlalchemy import BigInteger, Column, DateTime, Index, String, func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.types import JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -43,4 +43,5 @@ class IndustrialFacility(Base):
     __table_args__ = (
         Index("idx_industrial_facilities_type", "facility_type"),
         Index("idx_industrial_facilities_source_id", "source_id"),
+        UniqueConstraint("source", "source_id", name="uq_facility_source"),
     )

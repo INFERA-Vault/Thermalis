@@ -1,0 +1,26 @@
+{
+    "label_columns_removed_from_X": [
+        "source_label",
+        "label_source",
+        "source_record_id",
+        "match_distance_m",
+        "time_difference",
+        "confidence",
+        "review_status",
+        "tier"
+    ],
+    "feature_columns_in_X": [
+        "distance_to_facility_meters",
+        "nearby_facility_count",
+        "hotspot_frequency_30d",
+        "persistence_days",
+        "frp",
+        "brightness_temperature",
+        "day_night",
+        "nearest_facility_type",
+        "land_cover_at_event",
+        "is_built_up",
+        "recurrence_rate"
+    ],
+    "leakage_risk_assessment": "LOW - No label provenance metadata exists in the feature columns. Geographic Grouping present to prevent spatial data leakage during CV."
+}

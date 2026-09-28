@@ -44,12 +44,26 @@ class Settings(BaseSettings):
 
     # NASA FIRMS API Configuration
     FIRMS_API_KEY: str = ""
+    
+    JWT_SECRET_KEY: str = "local_development_secret"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
     FIRMS_BASE_URL: str = "https://firms.modaps.eosdis.nasa.gov/api"
     FIRMS_TIMEOUT: int = 30
 
     # OpenStreetMap / Overpass API Configuration
-    OVERPASS_URL: str = "https://overpass-api.de/api/interpreter"
+    OVERPASS_URL: str = "https://overpass.openstreetmap.fr/api/interpreter"
     OVERPASS_TIMEOUT: int = 60
+
+    # Satellite STAC API Configuration (Element84 Earth Search)
+    STAC_API_URL: str = "https://earth-search.aws.element84.com/v1/search"
+    STAC_TIMEOUT: int = 60
+
+    # Live Refresh Configuration
+    LIVE_REFRESH_ENABLED: bool = True
+    LIVE_REFRESH_INTERVAL_SECONDS: int = 60
+    LIVE_REFRESH_COUNTRY_CODE: str = "IND"
+    LIVE_REFRESH_SOURCE: str = "VIIRS_SNPP_NRT"
 
     model_config = SettingsConfigDict(
         env_file=".env",
