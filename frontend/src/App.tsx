@@ -237,8 +237,11 @@ export default function App() {
       m.on('click', 'firms-unclustered', (e) => {
         if (!e.features || e.features.length === 0) return;
         const feature = e.features[0];
-        const id = feature.properties.id;
-        setSelectedEventId(id);
+        // MapLibre strips 'id' from properties and promotes it to the top-level feature.id
+        const id = feature.properties.id ?? feature.id;
+        if (id !== undefined && id !== null) {
+          setSelectedEventId(Number(id));
+        }
       });
 
       m.on('mouseenter', 'firms-clusters', () => { m.getCanvas().style.cursor = 'pointer'; });

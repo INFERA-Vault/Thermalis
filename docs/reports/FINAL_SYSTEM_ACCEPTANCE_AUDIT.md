@@ -161,3 +161,16 @@ FRONTEND BUILD ........ Built successfully (1.28MB bundle)
 1. Model A must not be conflated with a generic industrial fire detector; it is strictly a binary classifier tuned for GIHS reference proximity vs Agricultural baselines.
 2. The `sentinel_observations` table relies heavily on severely rate-limited querying, yielding only 3 persisted observations in this testing shard.
 3. The FIRMS Bounding Box extraction inherently includes multi-national perimeter hits along the subcontinental square, which isn't exclusively Indian territory.
+
+
+### FINAL HOTSPOT CLICK / EVENT INSPECTOR FIX
+- **Original Bug:** Clicking an individual unclustered FIRMS hotspot failed to open the Event Inspector on the right panel.
+- **Root Cause:** MapLibre GL JS strips the 'id' property from the 'properties' dictionary of GeoJSON features and maps it to the top-level 'Feature.id' during vector tile generation. The frontend was explicitly referencing 'feature.properties.id', which was returning 'undefined'.
+- **Exact Files Changed:** 'frontend/src/App.tsx'
+- **Exact Fix:** Modified the click handler to fall back to 'feature.id' if 'feature.properties.id' is unavailable using 'const id = feature.properties.id ?? feature.id;'.
+- **Cluster Click Result:** PASS (Zooms into the cluster correctly)
+- **Individual Hotspot Click Result:** PASS (Successfully triggers Event Inspector)
+- **Event Inspector Result:** PASS (Renders data)
+- **Frontend/Backend Consistency Result:** PASS
+- **Alert UI Regression Result:** PASS (Alert acknowledge/resolve still updates the state seamlessly)
+- **Test/Build Results:** PASS (42/42 backend tests passing, frontend successfully compiled)

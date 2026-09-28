@@ -1,231 +1,228 @@
-# AI-Based Detection & Classification of Industrial Fires and Persistent Thermal Sources
+# INFERA — Industrial Fire & Thermal Anomaly Intelligence Platform
 
-> **Geospatial Intelligence Platform using NASA FIRMS, OpenStreetMap, Multi-Mission Satellite Imagery (Sentinel-2/1), and PostGIS**
+**Problem Statement:** SIH PS-162
 
----
+This system is an intelligent Geographic Information System (GIS) designed to detect thermal anomalies from NASA FIRMS, identify useful industrial context using OpenStreetMap, study repeated or persistent thermal activity, enrich events with land-cover metadata, classify thermal events with machine learning (Model A), generate automated alerts, and provide an interactive map-based investigation dashboard.
 
-## 📌 Overview
+## What We Were Asked to Build
 
-This platform provides an automated end-to-end pipeline for detecting, contextualizing, and classifying industrial fires and persistent thermal anomalies across regions of interest. By combining near-real-time satellite thermal detections (NASA FIRMS) with spatial infrastructure inventories (OpenStreetMap), multi-spectral/SAR satellite data (Sentinel-2, Sentinel-1), and deep spatial modeling in PostgreSQL/PostGIS, the system distinguishes persistent industrial flares and high-temperature manufacturing sources from natural wildfires, agricultural burning, and mining operations.
+The goal was not just to show dots on a map. The system had to:
+1. Collect thermal events from NASA APIs.
+2. Store them efficiently in a spatial database.
+3. Identify nearby industrial facilities to provide context.
+4. Understand land-cover context (e.g., built-up vs. cropland).
+5. Detect repeated or persistent thermal activity across days.
+6. Use satellite information where available.
+7. Create useful machine learning features.
+8. Train a real ML model.
+9. Provide predictions for real events.
+10. Generate alerts for interesting activity.
+11. Show the results in a usable GIS dashboard.
+12. Continuously refresh new FIRMS observations.
+13. Test the system and verify data integrity.
 
----
+## Data Sources
 
-## 🏛️ System Architecture
+| Source | What it provides | How we use it | Current status |
+|--------|------------------|---------------|----------------|
+| **NASA FIRMS** | Thermal anomaly observations | Coordinates, acquisition time, FRP, brightness temp | Active (Live Refresh) |
+| **OpenStreetMap / Overpass** | Industrial facilities | Locations and types of nearby facilities | Active |
+| **ESA WorldCover** | Land-cover classification | Event-level context (e.g., built-up, cropland) | Active |
+| **Sentinel-1 / Sentinel-2** | Satellite scene metadata | Real observations | Limited (API rate limits restrict broad ingestion) |
+| **GIHS Extended Annual 2000–2023** | Reference for industrial heat-source association (Zenodo DOI: 10.5281/zenodo.20960492) | Provides a foundation for Class 1 | Active |
+| **Punjab Crop Residue Burning** | Agricultural burning reference (Zenodo DOI: 10.5281/zenodo.20179137) | Provides a foundation for Class 0 | Active |
 
-```
-                                  +-----------------------+
-                                  |   NASA FIRMS API      |
-                                  |  (VIIRS / MODIS NRT)  |
-                                  +-----------+-----------+
-                                              |
-                                              v
-+-----------------------+         +-----------------------+         +-----------------------+
-|  OpenStreetMap (OSM)  |         |   FastAPI Backend     |         |   Sentinel-2 / SAR    |
-|   Overpass API        | ------> |  - Ingestion Service  | <------ |   Multi-spectral      |
-|  (Industrial Footpr.) |         |  - Deduplication      |         |   (Future Modules)    |
-+-----------------------+         |  - Normalization      |         +-----------------------+
-                                  +-----------+-----------+
-                                              |
-                                              v
-                                  +-----------------------+
-                                  | PostgreSQL + PostGIS  |
-                                  |  - WGS84 EPSG:4326    |
-                                  |  - GIST Spatial Index |
-                                  |  - 7 Core Entities    |
-                                  +-----------+-----------+
-                                              |
-                                              v
-                                  +-----------------------+
-                                  |   AI / ML Engine      |
-                                  |  - Feature Extractor  |
-                                  |  - Classifier         |
-                                  |  - Risk Assessor      |
-                                  +-----------------------+
-```
+## Phase-by-Phase Development
 
----
+*(Note: The current repository uses subdivisions like 10A, 10B, 10D, 10E, but they map to these original 13 core phases.)*
 
-## 📂 Repository Structure
+### PHASE 1 — FIRMS + PostGIS
+- **What it does:** Ingests NASA FIRMS data and stores it in PostgreSQL with PostGIS extensions.
+- **Implementation:** Python scheduled ingestion, deduplication using timestamps and coordinates.
+- **Status:** Complete.
 
-```
-project-root/
-│
-├── README.md                           # Project documentation
-├── docker-compose.yml                  # Local PostgreSQL 16 + PostGIS 3.4 container
-├── alembic.ini                         # Database migration configuration
-├── .env.example                        # Environment template
-├── .gitignore                          # Exclusions (data, weights, secrets, envs)
-│
-├── backend/                            # FastAPI Python Backend
-│   ├── requirements.txt                # Core backend dependencies
-│   ├── alembic/                        # Version-controlled PostGIS migrations
-│   │   └── versions/
-│   │       └── 0001_initial_postgis_schema.py
-│   ├── app/
-│   │   ├── main.py                     # Application factory & lifespan
-│   │   ├── api/                        # Modular API routers
-│   │   │   ├── router.py               # Aggregated central router
-│   │   │   ├── health.py               # Health check endpoint (/api/health)
-│   │   │   └── firms.py                # FIRMS ingestion endpoint (/api/v1/firms/ingest)
-│   │   ├── core/                       # Settings, DB session, logging, errors
-│   │   │   ├── config.py               # Pydantic Settings & environment validation
-│   │   │   ├── database.py             # SQLAlchemy engine pool & Base
-│   │   │   ├── logging.py              # Centralized logging formatters
-│   │   │   └── exceptions.py           # Exception handlers
-│   │   ├── models/                     # PostGIS SQLAlchemy ORM models
-│   │   │   ├── thermal_event.py        # FIRMS thermal anomaly points
-│   │   │   ├── industrial_facility.py  # OSM infrastructure geometries
-│   │   │   ├── association.py          # N:M Event-Facility spatial links
-│   │   │   ├── satellite_observation.py# Scene & granule metadata
-│   │   │   ├── event_feature.py        # Spectral & persistence ML features
-│   │   │   ├── classification.py       # AI model inference predictions
-│   │   │   └── risk_assessment.py      # Severity scoring & anomaly metrics
-│   │   ├── schemas/                    # Pydantic validation schemas
-│   │   │   ├── health.py
-│   │   │   └── firms.py
-│   │   ├── services/                   # Business logic & external pipelines
-│   │   │   └── firms.py                # NASA FIRMS ETL & deduplication service
-│   │   ├── pipelines/                  # Scheduled data batch pipelines
-│   │   └── utils/                      # Helper utilities
-│   └── tests/                          # Pytest test suite (17 Unit + 3 Live DB)
-│       ├── test_health.py
-│       ├── test_database_models.py
-│       ├── test_firms_service.py
-│       ├── test_firms_api.py
-│       └── test_database_integration.py
-│
-├── frontend/                           # Client-side UI & GIS Visualization
-│   ├── public/
-│   └── src/
-│       ├── components/
-│       ├── pages/
-│       ├── services/
-│       ├── hooks/
-│       ├── types/
-│       └── utils/
-│
-├── data/                               # Data directories (Strictly Git-ignored)
-│   ├── raw/                            # Raw FIRMS, OSM, Sentinel-1/2, Landcover
-│   ├── processed/
-│   └── samples/
-│
-├── ml/                                 # AI/ML Models & Experimentation
-│   ├── datasets/
-│   ├── features/
-│   ├── training/
-│   ├── models/
-│   └── evaluation/
-│
-├── scripts/                            # Automation & maintenance scripts
-└── docs/                               # Architecture, research & phase reports
-    └── reports/
-        └── PHASE_1_TO_5_IMPLEMENTATION_REPORT.md
-```
+### PHASE 2 — OSM + Spatial Enrichment
+- **What it does:** Fetches nearby industrial facilities from OSM.
+- **Implementation:** Queries OSM Overpass API and uses PostGIS spatial queries to find facilities within a specific radius of thermal events.
+- **Status:** Complete.
 
----
+### PHASE 3 — WorldCover
+- **What it does:** Determines the land-cover class at the location of the event.
+- **Implementation:** Checks ESA WorldCover data to identify if the event is on built-up land, cropland, etc.
+- **Status:** Complete.
 
-## 🗄️ Database & PostGIS Schema
+### PHASE 4 — Persistence / Clustering
+- **What it does:** Tracks whether thermal activity happens repeatedly in the same spot over time. 
+  - *Note:* Map visualization clustering simply groups nearby points visually for readability on the frontend. Analytical persistence actually calculates recurring spatial-temporal patterns in the backend.
+- **Implementation:** Uses DBSCAN-based logic (`ST_ClusterDBSCAN`) to calculate hotspot frequency and persistence over rolling windows.
+- **Status:** Complete.
 
-The system implements 7 normalized tables utilizing PostGIS geometry types with spatial indexing:
+### PHASE 5 — Sentinel-2
+- **What it does:** Fetches satellite imagery metadata to corroborate thermal events.
+- **Implementation:** Connects to STAC APIs for Sentinel-2 (and Sentinel-1). 
+- **Limitation:** Coverage is currently extremely limited; only a few genuine observations are stored due to API limits.
+- **Status:** Limited.
 
-| Table | Geometry Column | Spatial Index | Description |
-| :--- | :--- | :--- | :--- |
-| `thermal_events` | `POINT` (SRID 4326) | GIST | Thermal anomalies from VIIRS (SNPP/NOAA-20/21) & MODIS. |
-| `industrial_facilities` | `GEOMETRY` (SRID 4326) | GIST | Refineries, chemical plants, power plants, mines from OSM. |
-| `thermal_event_facility_associations` | N/A | B-Tree on distance | N:M decoupled spatial links with computed distance in meters. |
-| `satellite_observations` | N/A | Timestamp Index | Sentinel-2/1 scene acquisition metadata. |
-| `event_features` | N/A | Unique Event FK | Spectral indices (NDVI, NDBI, SWIR) and persistence duration. |
-| `classifications` | N/A | Class Index | Predicted class (`industrial_fire`, `persistent_source`, etc.). |
-| `risk_assessments` | N/A | Severity Index | Risk metrics, hazard tier, and breakdown factors. |
+### PHASE 6 — FIRMS ↔ OSM Association
+- **What it does:** Links thermal events to specific nearby industrial facilities.
+- **Implementation:** PostGIS spatial joins. Evaluates distance threshold logic and maintains relationship tables.
+- **Status:** Complete.
 
----
+### PHASE 7 — Satellite Metadata / Sentinel Pipeline
+- **What it does:** Pipeline to manage STAC metadata discovery.
+- **Implementation:** Discovers metadata for scenes. It does not download full heavy imagery but links the metadata.
+- **Status:** Complete.
 
-## 🚀 Quick Start & Development Setup
+### PHASE 8 — Feature Engineering
+- **What it does:** Extracts data points for the ML model.
+- **Features Used:** `nearby_facility_count`, `hotspot_frequency_30d`, `persistence_days`, `frp`, `brightness_temperature`, `day_night`, `land_cover_at_event`, `is_built_up`, `recurrence_rate`.
+- **Status:** Complete.
 
-### 1. Prerequisites
-- **Python 3.10+** (Tested on Python 3.13)
-- **Docker Desktop** (or native PostgreSQL 16 with PostGIS 3.4)
+### PHASE 9 — Training Dataset
+- **What it does:** Prepares labels and samples.
+- **Implementation:** We construct the dataset using GIHS (Tier A) as the industrial reference and Punjab Crop Residue Burning as the agricultural reference. Features (like OSM proximity) are inputs, not ground truth.
+- **Status:** Complete.
 
-### 2. Environment Setup
-```bash
-# Clone the repository
-git clone https://github.com/INFERA-SIH26175/PS-162.git
-cd PS-162
+### PHASE 10 — XGBoost Model A
+- **What it does:** Classifies the reference datasets.
+- **Implementation:** XGBoost algorithm with `CalibratedClassifierCV` (Sigmoid / Platt scaling).
+- **Artifact:** `ml/models/model_a_calibrated.joblib`
+- **Class Mapping:** 0 = AGRICULTURAL_BURNING_REFERENCE, 1 = INDUSTRIAL_HEAT_SOURCE_ASSOCIATION.
+- **Final Verified Metrics:**
+  - Accuracy: 0.9321
+  - Precision: 0.9737
+  - Recall: 0.9350
+  - F1: 0.9540
+  - ROC-AUC: 0.9621
+  - PR-AUC: 0.9889
+  - Brier Score: 0.0334
+  - Confusion Matrix: `[[84, 7], [18, 259]]`
+- **Critical Limitation:** This model does NOT prove an event is a confirmed industrial fire. It merely distinguishes between GIHS-associated industrial heat sources and agricultural burning reference events.
 
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate    # Linux / macOS
-.venv\Scripts\activate       # Windows
+### PHASE 11 — Human Labels / Model B Preparation
+- **What it does:** A system for humans to verify predictions.
+- **Status:** Infrastructure exists, but Model B is not currently considered valid due to insufficient subtype labels. This remains future work.
 
-# Install backend dependencies
-pip install -r backend/requirements.txt
+### PHASE 12 — Explainability + Alerts
+- **Explainability:** Global SHAP dependence is established in training. Individual-event SHAP is not implemented in the current API.
+- **Alerts:** Generates alerts for `NEW_THERMAL_ANOMALY`, `INDUSTRIAL_HEAT_SOURCE_ALERT`, and `PERSISTENT_THERMAL_ACTIVITY`.
+- **Status:** Complete. Alerts transition between ACTIVE, ACKNOWLEDGED, and RESOLVED safely (idempotent).
 
-# Create local environment configuration
-cp .env.example .env
-```
+### PHASE 13 — Final GIS Dashboard + Testing / Deployment
+- **Frontend:** React + TypeScript + Vite + MapLibre. Displays FIRMS layer (red points for unclustered hotspots, yellow/orange/red numbered circles for visual clusters), OSM facilities (purple points), and alerts.
+- **Backend:** FastAPI offering routes for health, FIRMS refresh, GeoJSON events, Model A predictions, and alert resolution.
+- **Testing:** Comprehensive test suite for backend logic and database integrity.
+- **Deployment:** The application is verified natively locally. Containerization files exist but are not strictly required for local execution. Public deployment has not yet happened.
 
-### 3. Start PostgreSQL + PostGIS (Docker)
-```bash
-docker compose up -d
-```
+## Current Database Snapshot
+*Verified local snapshot — 2026-09-28*
 
-### 4. Run Database Migrations (Alembic)
-```bash
-alembic upgrade head
-```
+| Entity | Count |
+|--------|-------|
+| Thermal Events | 23,549 |
+| Industrial Facilities | 997 |
+| Event ↔ Facility Associations | 2,311 |
+| Event Features | 951 |
+| Satellite Observations | 3 |
+| Total Alerts | 168 |
+| Active Alerts | 167 |
+| Acknowledged Alerts | 0 |
+| Resolved Alerts | 1 |
 
-### 5. Start FastAPI Backend Server
-```bash
-python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-Interactive API docs will be available at:
-- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
-- **Health Check**: [http://localhost:8000/api/health](http://localhost:8000/api/health)
+*Integrity Checks:* Duplicate thermal events (1), Orphan associations (0), Orphan alerts (0).
 
-### 6. Run Test Suite
-```bash
-python -m pytest backend/tests -v
-```
+## Frontend User Guide
 
----
+1. Open `http://localhost:5173`.
+2. **The Map:** Renders an English basemap with visual markers.
+3. **FIRMS Points:** Red dots represent individual thermal anomalies.
+4. **Numbered Clusters:** Large yellow/orange/red circles group points. Clicking a cluster zooms in to reveal the individual points.
+5. **OSM Facilities:** Purple dots represent industrial facilities.
+6. **Layers:** Use the left panel to toggle the FIRMS or OSM layers on/off.
+7. **Event Inspector:** Click an individual red thermal anomaly to open the Event Inspector on the right.
+8. **Model A:** Inside the Event Inspector, view the classification prediction.
+9. **Alerts:** Use the bottom-left panel to view ACTIVE alerts. Click an alert to center the map on the event.
+10. **Acknowledge/Resolve:** Click the "Acknowledge" or "Resolve" button on an active alert inside the Event Inspector to update its status.
+11. **Refresh Data:** Click the "Refresh Data" button at the top to poll the NASA APIs live.
+12. **Success:** Data populates, maps are visible, and alerts change state smoothly.
+13. **Failure:** A red error badge will appear near the "LIVE" indicator if the backend fails to connect to NASA APIs.
 
-## 🛰️ NASA FIRMS API Ingestion
+**Known Bug:**
+- Individual FIRMS hotspot click: An individual red FIRMS point is visible, but clicking it is still not reliably opening the Event Inspector. This is a known frontend issue under investigation.
 
-To trigger near-real-time ingestion via API:
-```bash
-curl -X POST "http://localhost:8000/api/v1/firms/ingest" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "source": "VIIRS_SNPP_NRT",
-       "bbox": {
-         "min_lon": 68.0,
-         "min_lat": 8.0,
-         "max_lon": 97.0,
-         "max_lat": 37.0
-       },
-       "day_range": 1
-     }'
-```
+## How to Run Locally
 
----
+1. **Database:** Ensure PostgreSQL with PostGIS is running and credentials match the `.env` file (e.g., `DATABASE_URL=postgresql://user:pass@localhost:5432/infera`).
+2. **Backend:**
+   ```bash
+   source .venv/bin/activate
+   uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
+   ```
+3. **Frontend:**
+   ```bash
+   cd frontend
+   npm run dev -- --port 5173 --host
+   ```
+   Requires `VITE_MAPTILER_API_KEY` in `frontend/.env`.
 
-## 📊 Phase Progress Summary
+## Current Test Results
 
-| Phase | Description | Status |
-| :---: | :--- | :---: |
-| **Phase 1** | Standardized Modular Project Structure & `.gitignore` | ✅ **Complete** |
-| **Phase 2** | FastAPI Backend Foundation, Settings, Logging, Health API | ✅ **Complete** |
-| **Phase 3** | PostgreSQL + PostGIS Models, Geometries, Alembic Migrations | ✅ **Complete** |
-| **Phase 4** | NASA FIRMS Service ETL, Validation, Normalization, Deduplication | ✅ **Complete** |
-| **Phase 5** | Local PostGIS Environment, Docker Compose, Integration Tests | ✅ **Complete** |
-| **Phase 6** | OpenStreetMap / Overpass Infrastructure Ingestion & Spatial Matching | ⏳ *Next* |
-| **Phase 7** | Sentinel-2 / Sentinel-1 Satellite Data Processing | ⏳ *Upcoming* |
-| **Phase 8** | Feature Engineering & Temporal Persistence Analysis | ⏳ *Upcoming* |
-| **Phase 9** | AI Model Training, Classification & Risk Scoring | ⏳ *Upcoming* |
-| **Phase 10**| GIS Visualization Dashboard & Alerting Frontend | ⏳ *Upcoming* |
+- **Backend:** 42 passed, 28 warnings in 4.90s.
+- **Frontend Build:** Built in 396ms, successfully built (1.28 MB bundle).
+- **Database:** Integrity verified locally.
+- **Model:** Final evaluation results matched out-of-sample expectations (Brier: 0.0334).
+- **Alerts:** Idempotency and lifecycle verification passed.
+- **Security:** Secret tracking checked (no API keys in source control).
+- **Browser:** The frontend UI renders natively, though MapLibre interaction features present the known click bug mentioned above.
 
----
+## Known Limitations
 
-## 📄 License
-Internal Development - SIH Project PS-162.
+1. **Scope:** Model A has a restricted reference-classification scope (it is not a universal industrial-fire detector).
+2. **Generalization:** Broad geographic generalization is not established.
+3. **Satellites:** Sentinel observations are limited due to restrictive public API rate limits.
+4. **Geography:** FIRMS uses an India-focused rectangular bounding region `[8.0, 68.0, 37.0, 97.0]`, meaning some neighboring-country observations inevitably appear.
+5. **Frontend Bug:** The individual FIRMS hotspot click/Event Inspector interaction currently has a frontend bug.
+6. **Deployment:** Public deployment has not yet been performed.
+7. **Docker:** Docker is optional for this project and not required for native operation.
+
+## Project Structure
+
+- `backend/`: FastAPI application, API routes, SQLAlchemy models, and background services.
+- `frontend/`: React Vite application and map visualization components.
+- `ml/`: Model training scripts, Jupyter notebooks, and serialized model artifacts.
+- `scripts/`: Standalone Python scripts for data ingestion and utility tasks.
+- `docs/`: Audit reports and technical specifications.
+- `migrations/`: Alembic database migration scripts.
+- `docker-compose.yml`: Containerization configuration.
+- `.env.example`: Template for environment variables.
+
+## Technology Used
+
+| Technology | Why we use it |
+|------------|---------------|
+| Python | Core backend and ML logic |
+| FastAPI | High-performance async API server |
+| PostgreSQL | Relational database storage |
+| PostGIS | Spatial extension for bounding box and radius queries |
+| React | Frontend component framework |
+| TypeScript | Type-safe frontend code |
+| Vite | Fast frontend build tool |
+| MapLibre / MapTiler | Open-source vector map rendering |
+| XGBoost | High-performance gradient boosting for Model A |
+| scikit-learn / joblib | ML evaluation pipelines and model serialization |
+
+## Final Project Status
+
+| Component | Status |
+|-----------|--------|
+| NASA FIRMS Ingestion | PASS |
+| Spatial Database | PASS |
+| Map Rendering | PASS |
+| ML Model A | PASS (Within restricted scope) |
+| Alerts System | PASS |
+| Satellite Integration | LIMITED (Due to API limits) |
+| Hotspot Click Interaction | KNOWN ISSUE |
+| Public Internet Deployment | NOT DEPLOYED |
+
+**Overall Verdict: B — COMPLETE WITH DOCUMENTED LIMITATIONS**
+The system fulfills the core PS-162 criteria, successfully ingesting live spatial data, enriching it with OSM, applying a validated classification model, and generating stateful alerts natively. Limitations involve the ML scope and frontend interaction bugs.
