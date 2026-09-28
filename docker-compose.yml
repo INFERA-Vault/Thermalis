@@ -1,22 +1,61 @@
+version: '3.8'
+
 services:
   db:
-    image: postgis/postgis:16-3.4-alpine
-    container_name: geospatial_postgis_db
-    restart: unless-stopped
+    image: postgis/postgis:15-3.3
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespassword
-      POSTGRES_DB: geospatial_fires_db
+      POSTGRES_USER: ${POSTGRES_USER:-sih_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sih_password}
+      POSTGRES_DB: ${POSTGRES_DB:-geospatial_fires_db}
     ports:
       - "5432:5432"
     volumes:
-      - postgis_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d geospatial_fires_db"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sih_user} -d ${POSTGRES_DB:-geospatial_fires_db}"]
+      interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-sih_user}:${POSTGRES_PASSWORD:-sih_password}@db:5432/${POSTGRES_DB:-geospatial_fires_db}
+      - FIRMS_API_KEY=${FIRMS_API_KEY}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:8080}
+    ports:
+      - "8001:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_MAPTILER_API_KEY: ${VITE_MAPTILER_API_KEY}
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8001}
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
 
 volumes:
-  postgis_data:
-    name: geospatial_postgis_data
+  postgres_data:

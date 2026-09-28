@@ -1,0 +1,10 @@
+node_modules
+.venv
+frontend/dist
+.env
+frontend/.env
+ml/datasets/raw
+__pycache__
+*.pyc
+.git
+.github

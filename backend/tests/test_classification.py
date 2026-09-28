@@ -4,10 +4,10 @@ import os
 
 def test_model_loading():
     """Verify the model loads successfully from disk"""
-    model_path = 'ml/models/model_a_xgboost.json'
+    model_path = 'ml/models/model_a_calibrated.joblib'
     meta_path = 'ml/models/model_a_metadata.json'
     
-    assert os.path.exists(model_path), "Model JSON file is missing."
+    assert os.path.exists(model_path), "Model joblib file is missing."
     assert os.path.exists(meta_path), "Metadata JSON file is missing."
     
     # Check cache loading

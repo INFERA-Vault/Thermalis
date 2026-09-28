@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Dict, Any
 import json
 import os
-import xgboost as xgb
+import joblib
 import pandas as pd
 import numpy as np
 
@@ -17,23 +17,22 @@ router = APIRouter()
 model_cache = {}
 
 def get_model():
-    if 'xgb' not in model_cache:
-        model_path = 'ml/models/model_a_xgboost.json'
+    if 'clf' not in model_cache:
+        model_path = 'ml/models/model_a_calibrated.joblib'
         meta_path = 'ml/models/model_a_metadata.json'
         
         if not os.path.exists(model_path) or not os.path.exists(meta_path):
             raise HTTPException(status_code=503, detail="Model A not yet trained or deployed.")
             
-        xgb_model = xgb.XGBClassifier()
-        xgb_model.load_model(model_path)
+        clf_model = joblib.load(model_path)
         
         with open(meta_path, 'r') as f:
             metadata = json.load(f)
             
-        model_cache['xgb'] = xgb_model
+        model_cache['clf'] = clf_model
         model_cache['meta'] = metadata
         
-    return model_cache['xgb'], model_cache['meta']
+    return model_cache['clf'], model_cache['meta']
 
 
 @router.post("/predict/{event_id}", response_model=Dict[str, Any])
@@ -110,3 +109,4 @@ def predict_event_class(
         "feature_list": required_features,
         "disclaimer": "This model distinguishes GIHS-associated industrial heat-source reference events from agricultural-burning reference events. It is not a validated general industrial-fire detector."
     }
+

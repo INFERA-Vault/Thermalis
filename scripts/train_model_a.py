@@ -4,7 +4,8 @@ import json
 import os
 import shap
 import xgboost as xgb
-from sklearn.model_selection import StratifiedGroupKFold, cross_validate, cross_val_predict
+import joblib
+from sklearn.model_selection import StratifiedKFold, cross_validate, cross_val_predict
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, average_precision_score, confusion_matrix
 from sklearn.calibration import CalibratedClassifierCV
 import logging
@@ -54,11 +55,6 @@ def run_training():
         X['day_night'] = X['day_night'].astype('category')
     
     # 4. Splitting
-    # ISSUE: All negative class examples (91 agricultural) are in a single geographic group (30.0_75.5).
-    # StratifiedGroupKFold crashes because holding out that group removes all negatives from train/val.
-    # ALTERNATIVE: Use standard StratifiedKFold. Geographic leakage between classes is impossible 
-    # since they are 1000km apart.
-    from sklearn.model_selection import StratifiedKFold
     sgkf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     
     # 5. Baseline Model (Predict majority class = 1)
@@ -71,10 +67,9 @@ def run_training():
     base_pr = average_precision_score(y, y_pred_base)
     
     # XGBoost setup
-    # handle class imbalance
     class_1_cnt = (y == 1).sum()
     class_0_cnt = (y == 0).sum()
-    spw = class_0_cnt / class_1_cnt if class_1_cnt > 0 else 1.0 # Wait, it's negative / positive, so 91 / 277 ~ 0.32. This makes class 1 less important!
+    spw = class_0_cnt / class_1_cnt if class_1_cnt > 0 else 1.0 
 
     xgb_model = xgb.XGBClassifier(
         n_estimators=100,
@@ -87,10 +82,10 @@ def run_training():
         enable_categorical=True
     )
     
-    # 6. Cross validation evaluation
-    # We will compute cross_val_predict to get OOF probabilities for evaluation
-    y_pred = cross_val_predict(xgb_model, X, y, cv=sgkf, method='predict')
-    y_prob = cross_val_predict(xgb_model, X, y, cv=sgkf, method='predict_proba')[:, 1]
+    # 6. Evaluate using the Calibrated Model explicitly!
+    calibrated_clf_eval = CalibratedClassifierCV(xgb_model, method='sigmoid', cv=5)
+    y_pred = cross_val_predict(calibrated_clf_eval, X, y, cv=sgkf, method='predict')
+    y_prob = cross_val_predict(calibrated_clf_eval, X, y, cv=sgkf, method='predict_proba')[:, 1]
     
     acc = accuracy_score(y, y_pred)
     prec = precision_score(y, y_pred)
@@ -108,28 +103,25 @@ def run_training():
     errors = df[y != y_pred].copy()
     errors['predicted'] = y_pred[y != y_pred]
     errors['prob'] = y_prob[y != y_pred]
-    
     error_sample = errors.head(5)[['event_id', 'target_label', 'predicted', 'prob'] + feature_cols].to_dict(orient='records')
     
     # Retrain on full dataset for the final model
+    # Wait, CalibratedClassifierCV(cv=5) will automatically fit its internal estimators when we call .fit
+    # It does cross-validation internally to calibrate over the entire training set.
+    calibrated_clf_final = CalibratedClassifierCV(xgb_model, method='sigmoid', cv=5)
+    calibrated_clf_final.fit(X, y)
+    
+    # 9. Explainability (we extract from a raw fit on the full data since SHAP doesn't natively parse CalibratedClassifierCV easily)
     xgb_model.fit(X, y)
-    
-    # 10. Calibration
-    # CalibratedClassifierCV on top of the fitted estimator or via CV
-    calibrated_clf = CalibratedClassifierCV(xgb_model, method='sigmoid', cv=5)
-    calibrated_clf.fit(X, y)
-    
-    # 9. Explainability
     explainer = shap.TreeExplainer(xgb_model)
     shap_values = explainer.shap_values(X)
     shap_importance = np.abs(shap_values).mean(axis=0)
     feat_importance = dict(zip(feature_cols, shap_importance.tolist()))
-    # Sort
     feat_importance = {k: v for k, v in sorted(feat_importance.items(), key=lambda item: item[1], reverse=True)}
     
-    # 11. Save model files
-    # Save the base XGBoost model
-    xgb_model.save_model('ml/models/model_a_xgboost.json')
+    # 11. Save model files correctly
+    # We save the fully calibrated model using joblib
+    joblib.dump(calibrated_clf_final, 'ml/models/model_a_calibrated.joblib')
     
     metadata = {
         'target_definition': '1 = INDUSTRIAL_HEAT_SOURCE_ASSOCIATION, 0 = AGRICULTURAL_BURNING_REFERENCE',
@@ -140,7 +132,7 @@ def run_training():
             '0 (Agricultural)': int(class_0_cnt)
         },
         'geographic_group_count': int(groups.nunique()),
-        'split_methodology': 'StratifiedGroupKFold (n_splits=5) grouped by geographic_group',
+        'split_methodology': 'StratifiedKFold (n_splits=5) inside CV evaluation',
         'random_seed': 42,
         'hyperparameters': {
             'n_estimators': 100,
@@ -157,7 +149,7 @@ def run_training():
                 'roc_auc': float(base_roc),
                 'pr_auc': float(base_pr)
             },
-            'xgboost_cv': {
+            'calibrated_xgboost_cv': {
                 'accuracy': float(acc),
                 'precision': float(prec),
                 'recall': float(rec),
@@ -172,13 +164,14 @@ def run_training():
         'feature_importance_shap': feat_importance,
         'error_sample': error_sample,
         'calibration_performed': True,
-        'calibration_method': 'sigmoid via CalibratedClassifierCV'
+        'calibration_method': 'sigmoid via CalibratedClassifierCV',
+        'artifact_path': 'ml/models/model_a_calibrated.joblib'
     }
     
     with open('ml/models/model_a_metadata.json', 'w') as f:
         json.dump(metadata, f, indent=4)
         
-    logger.info("Done saving model and metadata.")
+    logger.info("Done saving calibrated model and metadata.")
 
 if __name__ == '__main__':
     run_training()
