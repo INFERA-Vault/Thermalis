@@ -171,6 +171,11 @@ The goal was not just to show dots on a map. The system had to:
    ```bash
    alembic upgrade head
    ```
+   Load sample runtime data (important for a fresh clone to verify UI functionality):
+   ```bash
+   export PYTHONPATH=.
+   python backend/scripts/seed.py
+   ```
 4. **Machine Learning Artifact:**
    Model A requires the pre-trained `model_a_calibrated.joblib` and `model_a_metadata.json` inside the `ml/models/` directory. These are tracked in Git, so they are available immediately upon cloning. (You can also regenerate them by running the `scripts/train_model_a.py` script).
 5. **Start Services:**

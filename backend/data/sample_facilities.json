@@ -1,0 +1,832 @@
+[
+  {
+    "id": 1,
+    "name": "Flamingo Films",
+    "geometry": "0101000020e61000005c55f65d914c5340b80c93043c863c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_3731453245",
+    "source": "OSM",
+    "facility_type": "OTHER_INDUSTRIAL",
+    "properties": {
+      "name": "Flamingo Films",
+      "building": "industrial"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 2,
+    "name": null,
+    "geometry": "0101000020e6100000bd0f51966b5253403cd285fd439f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239232",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 3,
+    "name": null,
+    "geometry": "0101000020e6100000f414de8a69525340c5ac1743399f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239233",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 4,
+    "name": null,
+    "geometry": "0101000020e6100000631dd83b6d52534060fb13a6399f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239234",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 5,
+    "name": null,
+    "geometry": "0101000020e610000002092f6670525340e23554313a9f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239235",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 6,
+    "name": null,
+    "geometry": "0101000020e610000001310917725253402a690fc52e9f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239236",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 7,
+    "name": null,
+    "geometry": "0101000020e6100000ebb58fcb6e525340fa4097152f9f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239237",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 8,
+    "name": null,
+    "geometry": "0101000020e61000005e94ea4c6b5253409cfc169d2c9f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239238",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 9,
+    "name": null,
+    "geometry": "0101000020e6100000d47c957c6c525340e8cc2cf8239f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239239",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 10,
+    "name": null,
+    "geometry": "0101000020e610000075e789e76c525340107fa88f1b9f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239240",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 11,
+    "name": null,
+    "geometry": "0101000020e610000044858f2d705253406a076d83249f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239241",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 12,
+    "name": null,
+    "geometry": "0101000020e610000077ff0efb73525340dcc24e0c249f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239242",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 13,
+    "name": null,
+    "geometry": "0101000020e6100000d0ce0e5d755253408d30fb2b1a9f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239243",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 14,
+    "name": null,
+    "geometry": "0101000020e6100000cc1d47bd71525340f3e1fec8199f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239244",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 15,
+    "name": null,
+    "geometry": "0101000020e6100000303c404173525340a53b3e100f9f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239245",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 16,
+    "name": null,
+    "geometry": "0101000020e61000005867c6ec76525340f2d885d50e9f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239246",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 17,
+    "name": null,
+    "geometry": "0101000020e6100000be778a0b7652534088951b56029f3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_10773239247",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "solar_thermal_collector",
+      "generator:source": "solar"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 18,
+    "name": "Poorvanchal bus depot",
+    "geometry": "0101000020e61000001030a990e14a5340e7ea7d99de883c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_11242142974",
+    "source": "OSM",
+    "facility_type": "OTHER_INDUSTRIAL",
+    "properties": {
+      "name": "Poorvanchal bus depot",
+      "depot": "bus",
+      "industrial": "depot"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 19,
+    "name": null,
+    "geometry": "0101000020e6100000fd5536621c4f5340c683d2bc888d3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_11263908967",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:method": "combustion",
+      "generator:source": "diesel"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 20,
+    "name": "ishant container line",
+    "geometry": "0101000020e6100000df484508b45153400ead044136813c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_11698050895",
+    "source": "OSM",
+    "facility_type": "FACTORY",
+    "properties": {
+      "name": "ishant container line",
+      "man_made": "works"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 21,
+    "name": null,
+    "geometry": "0101000020e6100000a0504f1f8152534010ef94698f9e3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_11998490316",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "generator:type": "reciprocating_engine",
+      "generator:source": "diesel"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 22,
+    "name": null,
+    "geometry": "0101000020e6100000827cbf87014c5340c297d3afbea73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429607",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 23,
+    "name": null,
+    "geometry": "0101000020e6100000fba188fbfe4b53402bbddb61b8a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429626",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 24,
+    "name": null,
+    "geometry": "0101000020e6100000eed9290c004c5340841c4aa3b8a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429627",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 25,
+    "name": null,
+    "geometry": "0101000020e610000066e54d34fe4b5340a235f570b8a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429628",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 26,
+    "name": null,
+    "geometry": "0101000020e6100000842c0b26fe4b5340d912a8b4b4a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429629",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 27,
+    "name": null,
+    "geometry": "0101000020e61000005a1def44ff4b53403ed8182ab5a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429630",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 28,
+    "name": null,
+    "geometry": "0101000020e6100000887e1244024c53405f3af768bba73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429631",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 29,
+    "name": null,
+    "geometry": "0101000020e6100000b702af3b024c534081046ad6bea73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429633",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 30,
+    "name": null,
+    "geometry": "0101000020e6100000e198654f024c534085b53176c2a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429634",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 337,
+    "name": null,
+    "geometry": "0101000020e610000042b5c1896849534047ab5ad251ae3c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_way_171606293",
+    "source": "OSM",
+    "facility_type": "INDUSTRIAL_AREA",
+    "properties": {
+      "landuse": "industrial"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 31,
+    "name": null,
+    "geometry": "0101000020e6100000d0471971014c53408bba206cc2a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429635",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 32,
+    "name": null,
+    "geometry": "0101000020e6100000ba8a2029fd4b5340161d249fb2a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429636",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 33,
+    "name": null,
+    "geometry": "0101000020e61000002524d236fe4b53406aabed81b1a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429637",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 34,
+    "name": null,
+    "geometry": "0101000020e61000003c6304f9fe4b534070b0dc77b1a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429638",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 35,
+    "name": null,
+    "geometry": "0101000020e6100000907b0448fe4b53406cff14d8ada73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429639",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 36,
+    "name": null,
+    "geometry": "0101000020e6100000b3c414f6fe4b53406b5b3920aea73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429640",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 37,
+    "name": null,
+    "geometry": "0101000020e6100000a8d4db55fe4b534097d2e92faaa73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429641",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 38,
+    "name": null,
+    "geometry": "0101000020e61000000f08196dfa4b53402ff598edafa73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429642",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 39,
+    "name": null,
+    "geometry": "0101000020e61000004aef1b5ffb4b5340f96b0d00b0a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429643",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 40,
+    "name": null,
+    "geometry": "0101000020e610000032c45675fb4b53407ee60709aca73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429644",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 41,
+    "name": null,
+    "geometry": "0101000020e610000067333d17fc4b534049b9a063aca73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429645",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 42,
+    "name": null,
+    "geometry": "0101000020e6100000bb624678fb4b5340277f9cd5a7a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429646",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 43,
+    "name": null,
+    "geometry": "0101000020e61000008bcb4cc4364c534011e0f42edea73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429647",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 44,
+    "name": null,
+    "geometry": "0101000020e61000001f9f909d374c5340a7a503a3dca73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429648",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 45,
+    "name": null,
+    "geometry": "0101000020e6100000fc6c8901374c5340e98024ecdba73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429649",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 46,
+    "name": null,
+    "geometry": "0101000020e61000003d450e11374c5340939e33b3e0a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429650",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 47,
+    "name": null,
+    "geometry": "0101000020e61000004f6848cb374c5340b28f04d0dea73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429651",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 48,
+    "name": null,
+    "geometry": "0101000020e6100000cca0359a374c5340d2f1e20ee5a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429652",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  },
+  {
+    "id": 49,
+    "name": null,
+    "geometry": "0101000020e610000001cb0006384c53402c859be7e3a73c40",
+    "created_at": "2026-09-27 21:52:18.931229+05:30",
+    "source_id": "osm_node_12135429653",
+    "source": "OSM",
+    "facility_type": "POWER_PLANT",
+    "properties": {
+      "power": "generator",
+      "location": "roof",
+      "generator:type": "solar_photovoltaic_panel",
+      "generator:method": "photovoltaic",
+      "generator:source": "solar",
+      "generator:output:electricity": "small_installation"
+    },
+    "updated_at": "2026-09-27 21:52:18.931229+05:30"
+  }
+]
