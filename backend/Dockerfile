@@ -14,6 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend /app/backend
 COPY ml /app/ml
+COPY alembic.ini /app/alembic.ini
 
 ENV PYTHONPATH=/app
 ENV PORT=8000

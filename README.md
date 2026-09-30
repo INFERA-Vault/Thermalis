@@ -152,18 +152,38 @@ The goal was not just to show dots on a map. The system had to:
 
 ## How to Run Locally
 
-1. **Database:** Ensure PostgreSQL with PostGIS is running and credentials match the `.env` file (e.g., `DATABASE_URL=postgresql://user:pass@localhost:5432/infera`).
-2. **Backend:**
+1. **Clone & Dependencies:**
+   ```bash
+   git clone <repository_url>
+   cd SIH162
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r backend/requirements.txt
+   cd frontend
+   npm install
+   cd ..
+   ```
+2. **Environment Configuration:**
+   Copy `.env.example` to `.env` and `frontend/.env.example` to `frontend/.env`. Update the placeholders with your API keys.
+3. **Database Setup:**
+   Ensure PostgreSQL with PostGIS is running and credentials match the `.env` file (e.g., `DATABASE_URL=postgresql://user:pass@localhost:5432/infera`).
+   Apply the database schema migrations:
+   ```bash
+   alembic upgrade head
+   ```
+4. **Machine Learning Artifact:**
+   Model A requires the pre-trained `model_a_calibrated.joblib` and `model_a_metadata.json` inside the `ml/models/` directory. These are tracked in Git, so they are available immediately upon cloning. (You can also regenerate them by running the `scripts/train_model_a.py` script).
+5. **Start Services:**
+   **Backend:**
    ```bash
    source .venv/bin/activate
    uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
    ```
-3. **Frontend:**
+   **Frontend:**
    ```bash
    cd frontend
-   npm run dev -- --port 5173 --host
+   npm run dev
    ```
-   Requires `VITE_MAPTILER_API_KEY` in `frontend/.env`.
 
 ## Current Test Results
 

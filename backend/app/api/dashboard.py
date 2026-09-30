@@ -43,6 +43,7 @@ def get_dashboard_events(
             },
             properties={
                 "id": row.id,
+                "event_id": row.id,
                 "frp": row.frp,
                 "brightness_temperature": row.brightness_temperature,
                 "confidence": row.confidence,
@@ -116,7 +117,7 @@ def get_event_details(event_id: int, db: Session = Depends(get_db)):
 
     # Features (from event_features)
     feature_query = text("""
-        SELECT nearby_facility_count, hotspot_frequency_30d, persistence_days, recurrence_rate, land_cover_at_event, is_built_up, day_night
+        SELECT nearby_facility_count, hotspot_frequency_30d, persistence_days, additional_features
         FROM event_features
         WHERE thermal_event_id = :event_id
     """)
@@ -124,17 +125,23 @@ def get_event_details(event_id: int, db: Session = Depends(get_db)):
 
     # Satellites
     sat_query = text("""
-        SELECT platform, observation_date, product_id
+        SELECT satellite as platform, acquisition_time as observation_date, product_id
         FROM satellite_observations
         WHERE thermal_event_id = :event_id
     """)
     sat_rows = db.execute(sat_query, {"event_id": event_id}).fetchall()
     satellites = [{"platform": s.platform, "date": s.observation_date.isoformat(), "product_id": s.product_id} for s in sat_rows]
 
+    feature_dict = dict(feature_row._mapping) if feature_row else None
+    if feature_dict and feature_dict.get('additional_features'):
+        extra = feature_dict['additional_features']
+        wc = extra.get('worldcover', {})
+        feature_dict['land_cover_at_event'] = wc.get('land_cover_class_name') or wc.get('land_cover_at_event')
+
     return {
         "event": dict(event_row._mapping),
         "facility": dict(facility_row._mapping) if facility_row else None,
-        "features": dict(feature_row._mapping) if feature_row else None,
+        "features": feature_dict,
         "satellites": satellites
     }
 

@@ -103,7 +103,6 @@ data/processed/*
 # Machine Learning Weights & Checkpoints
 # ==========================================
 ml/models/*
-!ml/models/**/.gitkeep
 *.pt
 *.pth
 *.onnx
@@ -115,6 +114,9 @@ ml/models/*
 *.ckpt
 *.weights
 *.pb
+!ml/models/**/.gitkeep
+!ml/models/model_a_calibrated.joblib
+!ml/models/model_a_metadata.json
 checkpoints/
 wandb/
 runs/

@@ -237,8 +237,11 @@ export default function App() {
       m.on('click', 'firms-unclustered', (e) => {
         if (!e.features || e.features.length === 0) return;
         const feature = e.features[0];
-        // MapLibre strips 'id' from properties and promotes it to the top-level feature.id
-        const id = feature.properties.id ?? feature.id;
+        
+        // MapLibre strips 'id' from properties, and Supercluster overwrites feature.id with an array index.
+        // We use the new 'event_id' property which is preserved.
+        const id = feature.properties.event_id;
+        
         if (id !== undefined && id !== null) {
           setSelectedEventId(Number(id));
         }
@@ -291,6 +294,7 @@ export default function App() {
       setClassification(null);
       return;
     }
+    
     const loadDetails = async () => {
       try {
         const details = await fetchEventDetails(selectedEventId);
@@ -638,8 +642,12 @@ export default function App() {
                     <div className={`ai-badge ${classification.predicted_class === 1 ? 'industrial' : 'agricultural'}`}>
                       {classification.predicted_class === 1 ? "Model A — GIHS-associated industrial heat-source association" : "Agricultural-burning reference"}
                     </div>
-                    <div className="ai-prob">{(classification.probability * 100).toFixed(1)}%</div>
-                    <div className="ai-version">Calibrated Probability &bull; Model {classification.model_version.split('T')[0]}</div>
+                    <div className="ai-prob">
+                      {classification.model_probability !== undefined && classification.model_probability !== null 
+                        ? `${(classification.model_probability * 100).toFixed(1)}%` 
+                        : "N/A"}
+                    </div>
+                    <div className="ai-version">Calibrated Probability &bull; Model {classification.model_version?.split('T')[0]}</div>
                     
                     <div className="ai-evidence">
                       <ShieldAlert size={14} style={{flexShrink: 0, marginTop: 2, color: '#eab308'}} />

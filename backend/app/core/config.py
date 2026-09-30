@@ -13,7 +13,18 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Industrial Fire & Thermal Anomaly Detection System"
     VERSION: str = "0.1.0"
     ENVIRONMENT: str = "development"
-    DEBUG: bool = True
+    DEBUG: Union[bool, None] = None
+    
+    @field_validator("DEBUG", mode="before")
+    @classmethod
+    def set_debug_based_on_env(cls, v: Union[bool, str, None], info) -> bool:
+        if v is not None:
+            if isinstance(v, str):
+                return v.lower() in ("true", "1", "yes")
+            return bool(v)
+        env = info.data.get("ENVIRONMENT", "development")
+        return env == "development"
+
     API_V1_PREFIX: str = "/api/v1"
 
     # Server Configuration
