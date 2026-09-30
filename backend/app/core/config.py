@@ -33,8 +33,14 @@ class Settings(BaseSettings):
     CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:3000",
         "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:5176",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
+        "http://127.0.0.1:5175",
+        "http://127.0.0.1:5176",
     ]
 
     @field_validator("CORS_ORIGINS", mode="before")
@@ -75,6 +81,17 @@ class Settings(BaseSettings):
     LIVE_REFRESH_INTERVAL_SECONDS: int = 60
     LIVE_REFRESH_COUNTRY_CODE: str = "IND"
     LIVE_REFRESH_SOURCE: str = "VIIRS_SNPP_NRT"
+
+    # Alert Email Configuration
+    ALERT_EMAIL_ENABLED: bool = False
+    ALERT_EMAIL_TO: str = ""
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM: str = ""
+    
+    FRONTEND_URL: str = "http://localhost:5173"
 
     model_config = SettingsConfigDict(
         env_file=".env",
