@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgis/postgis:15-3.3
@@ -24,8 +22,29 @@ services:
       dockerfile: backend/Dockerfile
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-sih_user}:${POSTGRES_PASSWORD:-sih_password}@db:5432/${POSTGRES_DB:-geospatial_fires_db}
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - DEBUG=${DEBUG:-false}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-local_development_secret}
       - FIRMS_API_KEY=${FIRMS_API_KEY}
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:8080}
+      - ALERT_EMAIL_ENABLED=${ALERT_EMAIL_ENABLED:-false}
+      - ALERT_EMAIL_TO=${ALERT_EMAIL_TO:-}
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USERNAME=${SMTP_USERNAME:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM=${SMTP_FROM:-}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:8080}
+      - EMERGENCY_DISPATCH_ENABLED=${EMERGENCY_DISPATCH_ENABLED:-false}
+      - EMERGENCY_ADMIN_KEY=${EMERGENCY_ADMIN_KEY:-}
+      - EMERGENCY_MIN_SEVERITY=${EMERGENCY_MIN_SEVERITY:-HIGH}
+      - EMERGENCY_DEFAULT_RADIUS_METERS=${EMERGENCY_DEFAULT_RADIUS_METERS:-5000}
+      - EMERGENCY_MAX_RECIPIENTS=${EMERGENCY_MAX_RECIPIENTS:-20}
+      - EMERGENCY_REQUEST_TIMEOUT_SECONDS=${EMERGENCY_REQUEST_TIMEOUT_SECONDS:-10}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID:-}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN:-}
+      - TWILIO_FROM_PHONE=${TWILIO_FROM_PHONE:-}
+      - TWILIO_API_BASE=${TWILIO_API_BASE:-https://api.twilio.com/2010-04-01}
     ports:
       - "8001:8000"
     depends_on:

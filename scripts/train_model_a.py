@@ -17,7 +17,19 @@ def run_training():
     os.makedirs('ml/models', exist_ok=True)
     
     # 1. Load Data
-    df = pd.read_parquet('ml/datasets/candidate_training_dataset.parquet')
+    parquet_path = 'ml/datasets/candidate_training_dataset.parquet'
+    csv_path = 'ml/datasets/candidate_training_dataset.csv'
+    if os.path.exists(parquet_path):
+        dataset_path = parquet_path
+        df = pd.read_parquet(dataset_path)
+    elif os.path.exists(csv_path):
+        dataset_path = csv_path
+        df = pd.read_csv(dataset_path)
+        logger.warning("Parquet training dataset is unavailable; using the checked-in CSV fallback.")
+    else:
+        raise FileNotFoundError(
+            f"No training dataset found. Expected {parquet_path} or {csv_path}."
+        )
     df = df[df['tier'] == 'TIER_A'].copy()
     
     # Strictly filter labels just in case
@@ -30,7 +42,7 @@ def run_training():
     exclude_cols = [
         'event_id', 'datetime', 'latitude', 'longitude', 'geographic_group', 
         'source_label', 'label_source', 'source_record_id', 'match_distance_m', 
-        'time_difference', 'confidence', 'review_status', 'tier', 'target_label'
+        'time_difference', 'confidence', 'review_status', 'tier', 'source_class', 'target_label'
     ]
     
     feature_cols = [c for c in df.columns if c not in exclude_cols]
@@ -78,7 +90,6 @@ def run_training():
         scale_pos_weight=spw,
         random_state=42,
         eval_metric='logloss',
-        use_label_encoder=False,
         enable_categorical=True
     )
     
@@ -159,8 +170,8 @@ def run_training():
                 'confusion_matrix': cm.tolist()
             }
         },
-        'training_timestamp': pd.Timestamp.utcnow().isoformat(),
-        'dataset_source_path': 'ml/datasets/candidate_training_dataset.parquet',
+        'training_timestamp': pd.Timestamp.now(tz='UTC').isoformat(),
+        'dataset_source_path': dataset_path,
         'feature_importance_shap': feat_importance,
         'error_sample': error_sample,
         'calibration_performed': True,

@@ -40,16 +40,24 @@ def run():
         
         if match["source_label"] == "INDUSTRIAL_HEAT_SOURCE_REFERENCE":
             target_label = 1
+            source_class = "INDUSTRIAL_HEAT_SOURCE"
             tier = "TIER_A" if match["confidence"] == "HIGH" else "TIER_B"
-        elif match["source_label"] in ["AGRICULTURAL_BURNING_REFERENCE", "WILDFIRE_REFERENCE"]:
+        elif match["source_label"] == "AGRICULTURAL_BURNING_REFERENCE":
             target_label = 0
+            source_class = "AGRICULTURAL_BURNING"
             # We want high confidence (close in time and space)
             tier = "TIER_A" if match["confidence"] == "HIGH" else "TIER_B"
-            
+        elif match["source_label"] == "WILDFIRE_REFERENCE":
+            target_label = 0
+            source_class = "WILDFIRE_NATURAL_BURNING"
+            # We want high confidence (close in time and space)
+            tier = "TIER_A" if match["confidence"] == "HIGH" else "TIER_B"
+
         if tier == "UNKNOWN":
             # For the dataset, we will keep UNKNOWN for review
             tier = "REVIEW"
-            
+            source_class = "UNKNOWN"
+
         record = {
             "event_id": event.id,
             "detected_at": event.detected_at,
@@ -57,6 +65,7 @@ def run():
             "longitude": event.longitude,
             "geographic_group": generate_geographic_group(event.latitude, event.longitude),
             "target_label": target_label,
+            "source_class": source_class,
             "source_label": match["source_label"],
             "label_source": match["source"],
             "source_record_id": match["source_record_id"],

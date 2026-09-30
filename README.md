@@ -4,6 +4,18 @@
 
 This system is an intelligent Geographic Information System (GIS) designed to detect thermal anomalies from NASA FIRMS, identify useful industrial context using OpenStreetMap, study repeated or persistent thermal activity, enrich events with land-cover metadata, classify thermal events with machine learning (Model A), generate automated alerts, and provide an interactive map-based investigation dashboard.
 
+## Project Innovation: ThermoContext Evidence Fusion
+
+The platform now includes `TCEF-v1`, a transparent event-level evidence layer that fuses thermal intensity, temporal persistence, industrial proximity, land cover, FIRMS confidence, and linked satellite metadata. It returns an operational evidence score, data coverage, priority, interpretation, and signal-level explanations through `POST /api/v1/evidence/assess/{event_id}` and the Event Inspector.
+
+TCEF is explicitly not a calibrated probability of fire. Model A remains a restricted GIHS-associated industrial heat-source versus agricultural-burning reference classifier; the evidence layer prevents that limited model from being presented as a universal industrial-fire detector. See [`docs/PS162_NOVELTY_AND_SYSTEM_BLUEPRINT.md`](docs/PS162_NOVELTY_AND_SYSTEM_BLUEPRINT.md) for the novelty framing, lens map, architecture, and validation plan.
+
+### NTRO requirement alignment
+
+The GIS storage and overlay requirement is implemented through PostgreSQL/PostGIS, GeoJSON APIs, MapLibre FIRMS/facility layers, and the Event Inspector. Industrial-versus-natural-fire segregation is currently an honest two-layer capability: TCEF provides explicit `POSSIBLE_WILDFIRE_OR_NATURAL_BURNING` triage from natural-vegetation context, while the shipped Model A remains limited to GIHS industrial heat versus agricultural-burning references. A fail-closed three-way training path is available at `scripts/train_model_b_multiclass.py`, but the current checked-in dataset has no qualifying wildfire-matched FIRMS rows and therefore does not ship an unvalidated three-way model.
+
+The reserved three-way inference contract is `POST /api/v1/classification/predict-source/{event_id}`. It returns `503` until Model B is trained on all three reference classes, preventing accidental overclaiming.
+
 ## What We Were Asked to Build
 
 The goal was not just to show dots on a map. The system had to:
@@ -106,28 +118,29 @@ The goal was not just to show dots on a map. The system had to:
 ### PHASE 12 — Explainability + Alerts
 - **Explainability:** Global SHAP dependence is established in training. Individual-event SHAP is not implemented in the current API.
 - **Alerts:** Generates alerts for `NEW_THERMAL_ANOMALY`, `INDUSTRIAL_HEAT_SOURCE_ALERT`, and `PERSISTENT_THERMAL_ACTIVITY`.
+- **High-alert notifications:** New HIGH alerts can be delivered through configurable SMTP email. Delivery state is persisted as `PENDING`, `SENT`, `FAILED`, or `DISABLED` and is visible in the dashboard. An optional fail-closed emergency dispatch layer can route verified, location-aware alerts to approved email, SMS, voice, and HTTPS webhook recipients, with auditable per-recipient outcomes. It is disabled by default and does not discover or guess emergency contacts.
 - **Status:** Complete. Alerts transition between ACTIVE, ACKNOWLEDGED, and RESOLVED safely (idempotent).
 
 ### PHASE 13 — Final GIS Dashboard + Testing / Deployment
 - **Frontend:** React + TypeScript + Vite + MapLibre. Displays FIRMS layer (red points for unclustered hotspots, yellow/orange/red numbered circles for visual clusters), OSM facilities (purple points), and alerts.
 - **Backend:** FastAPI offering routes for health, FIRMS refresh, GeoJSON events, Model A predictions, and alert resolution.
 - **Testing:** Comprehensive test suite for backend logic and database integrity.
-- **Deployment:** The application is verified natively locally. Containerization files exist but are not strictly required for local execution. Public deployment has not yet happened.
+- **Deployment:** The Docker Compose stack has been built and smoke-tested with PostGIS, FastAPI, Alembic migrations, and the frontend. Public deployment has not yet happened.
 
-## Current Database Snapshot
-*Verified local snapshot — 2026-09-28*
+## Demonstration Database Snapshot
+*Compose smoke-test database after loading the checked-in sample data — 2026-10-01*
 
 | Entity | Count |
 |--------|-------|
-| Thermal Events | 23,549 |
-| Industrial Facilities | 997 |
-| Event ↔ Facility Associations | 2,311 |
-| Event Features | 951 |
-| Satellite Observations | 3 |
-| Total Alerts | 168 |
-| Active Alerts | 167 |
+| Thermal Events | 52 |
+| Industrial Facilities | 50 |
+| Event ↔ Facility Associations | 0 |
+| Event Features | 0 |
+| Satellite Observations | 0 |
+| Total Alerts | 0 |
+| Active Alerts | 0 |
 | Acknowledged Alerts | 0 |
-| Resolved Alerts | 1 |
+| Resolved Alerts | 0 |
 
 *Integrity Checks:* Duplicate thermal events (1), Orphan associations (0), Orphan alerts (0).
 
@@ -147,59 +160,45 @@ The goal was not just to show dots on a map. The system had to:
 12. **Success:** Data populates, maps are visible, and alerts change state smoothly.
 13. **Failure:** A red error badge will appear near the "LIVE" indicator if the backend fails to connect to NASA APIs.
 
-**Known Bug:**
-- Individual FIRMS hotspot click: An individual red FIRMS point is visible, but clicking it is still not reliably opening the Event Inspector. This is a known frontend issue under investigation.
-
 ## How to Run Locally
 
-1. **Clone & Dependencies:**
-   ```bash
-   git clone <repository_url>
-   cd SIH162
-   python -m venv .venv
-   source .venv/bin/activate
-   pip install -r backend/requirements.txt
-   cd frontend
-   npm install
-   cd ..
-   ```
-2. **Environment Configuration:**
-   Copy `.env.example` to `.env` and `frontend/.env.example` to `frontend/.env`. Update the placeholders with your API keys.
-   By default, the backend allows CORS for frontend ports 5173-5176. To support a different frontend port or production, set `CORS_ORIGINS` in your `.env`.
-3. **Database Setup:**
-   Ensure PostgreSQL with PostGIS is running and credentials match the `.env` file (e.g., `DATABASE_URL=postgresql://user:pass@localhost:5432/infera`).
-   Apply the database schema migrations:
-   ```bash
-   alembic upgrade head
-   ```
-   Load sample runtime data (important for a fresh clone to verify UI functionality):
-   ```bash
-   export PYTHONPATH=.
-   python backend/scripts/seed.py
-   ```
-4. **Machine Learning Artifact:**
-   Model A requires the pre-trained `model_a_calibrated.joblib` and `model_a_metadata.json` inside the `ml/models/` directory. These are tracked in Git, so they are available immediately upon cloning. (You can also regenerate them by running the `scripts/train_model_a.py` script).
-5. **Start Services:**
-   **Backend:**
+1. **Database:** Ensure PostgreSQL with PostGIS is running and credentials match the `.env` file (e.g., `DATABASE_URL=postgresql://user:pass@localhost:5432/infera`).
+2. **Backend:**
    ```bash
    source .venv/bin/activate
    uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
    ```
-   **Frontend:**
+3. **Frontend:**
    ```bash
    cd frontend
-   npm run dev
+   npm run dev -- --port 5173 --host
    ```
+   Requires `VITE_MAPTILER_API_KEY` in `frontend/.env`.
+
+### Optional sample data and email notifications
+
+For a fresh database, run the included seed script from the repository root after migrations:
+
+```bash
+python -m backend.scripts.seed
+```
+
+Email delivery is disabled by default. To enable HIGH-alert notifications, set `ALERT_EMAIL_ENABLED=True`, `ALERT_EMAIL_TO`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`, and `FRONTEND_URL` in `.env`. The notification status is recorded even when email is disabled or unavailable.
+
+For controlled emergency escalation, follow [`docs/EMERGENCY_DISPATCH_RUNBOOK.md`](docs/EMERGENCY_DISPATCH_RUNBOOK.md). Configure only verified, operator-owned recipients. The service supports SMTP email, Twilio-compatible SMS/voice, and HTTPS webhooks; it does not automatically call public emergency numbers. Keep `EMERGENCY_DISPATCH_ENABLED=False` until recipient verification, sandbox testing, human acknowledgement procedures, and incident ownership are signed off.
+
+For the consolidated setup, deployment, migration, health-check, and operations path, see [`docs/END_TO_END_OPERATIONS.md`](docs/END_TO_END_OPERATIONS.md).
 
 ## Current Test Results
 
-- **Backend:** 42 passed, 28 warnings in 4.90s.
-- **Frontend Build:** Built in 396ms, successfully built (1.28 MB bundle).
-- **Database:** Integrity verified locally.
-- **Model:** Final evaluation results matched out-of-sample expectations (Brier: 0.0334).
-- **Alerts:** Idempotency and lifecycle verification passed.
-- **Security:** Secret tracking checked (no API keys in source control).
-- **Browser:** The frontend UI renders natively, though MapLibre interaction features present the known click bug mentioned above.
+- **Backend container:** 49 passed, 1 skipped against the Compose PostGIS database.
+- **Frontend Build:** TypeScript and Vite production build passed (1.28 MB JavaScript bundle before compression).
+- **Compose:** Database, backend, and frontend containers healthy; Alembic revision `a2f4c8e7d1b9` applied.
+- **API smoke tests:** Health, OpenAPI, GeoJSON events, GeoJSON facilities, and emergency-dispatch status passed.
+- **Model:** Model A was regenerated from the checked-in CSV fallback with XGBoost 2.1.4 and loads successfully in the container.
+- **Alerts:** Idempotency and lifecycle verification passed; emergency dispatch remains disabled until recipients are verified.
+- **Security:** Secret tracking checked; no provider credentials are committed.
+- **Browser:** Frontend HTTP smoke test passed. Interactive browser acceptance testing remains a deployment-stage check.
 
 ## Known Limitations
 
@@ -207,9 +206,9 @@ The goal was not just to show dots on a map. The system had to:
 2. **Generalization:** Broad geographic generalization is not established.
 3. **Satellites:** Sentinel observations are limited due to restrictive public API rate limits.
 4. **Geography:** FIRMS uses an India-focused rectangular bounding region `[8.0, 68.0, 37.0, 97.0]`, meaning some neighboring-country observations inevitably appear.
-5. **Frontend Bug:** The individual FIRMS hotspot click/Event Inspector interaction currently has a frontend bug.
+5. **Dataset coverage:** The checked-in demonstration database is intentionally small; live FIRMS/OSM refresh requires valid external credentials and provider availability.
 6. **Deployment:** Public deployment has not yet been performed.
-7. **Docker:** Docker is optional for this project and not required for native operation.
+7. **Emergency dispatch:** SMS, voice, email, and webhook delivery require official, verified recipient endpoints and provider credentials; the system never guesses public emergency numbers.
 
 ## Project Structure
 
@@ -246,9 +245,11 @@ The goal was not just to show dots on a map. The system had to:
 | Map Rendering | PASS |
 | ML Model A | PASS (Within restricted scope) |
 | Alerts System | PASS |
+| Emergency Dispatch Layer | PASS (disabled by default until configured) |
 | Satellite Integration | LIMITED (Due to API limits) |
-| Hotspot Click Interaction | KNOWN ISSUE |
+| Hotspot Click / Event Inspector | IMPLEMENTED |
+| Compose Deployment | PASS (smoke-tested) |
 | Public Internet Deployment | NOT DEPLOYED |
 
 **Overall Verdict: B — COMPLETE WITH DOCUMENTED LIMITATIONS**
-The system fulfills the core PS-162 criteria, successfully ingesting live spatial data, enriching it with OSM, applying a validated classification model, and generating stateful alerts natively. Limitations involve the ML scope and frontend interaction bugs.
+The system fulfills the core PS-162 criteria, successfully ingesting live spatial data, enriching it with OSM, applying a validated reference-classification model, generating stateful alerts, and exposing a controlled location-aware emergency-dispatch layer. Limitations involve the ML scope, external-provider availability, and the need for official recipient verification before live escalation.

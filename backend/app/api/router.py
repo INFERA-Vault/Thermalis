@@ -38,3 +38,7 @@ from backend.app.api.dashboard import router as dashboard_router
 api_router.include_router(dashboard_router, prefix="/dashboard", tags=["Dashboard UI"])
 from backend.app.api.alerts import router as alerts_router
 api_router.include_router(alerts_router, prefix="/alerts", tags=["Alerts"])
+from backend.app.api.evidence import router as evidence_router
+api_router.include_router(evidence_router, prefix="/evidence", tags=["Evidence Fusion"])
+from backend.app.api.emergency import router as emergency_router
+api_router.include_router(emergency_router, prefix="/emergency", tags=["Emergency Dispatch"])

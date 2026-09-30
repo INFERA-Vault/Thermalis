@@ -299,6 +299,7 @@ body {
 }
 .ai-badge.industrial { background: rgba(248, 81, 73, 0.15); color: #ff7b72; border: 1px solid rgba(248,81,73,0.4); }
 .ai-badge.agricultural { background: rgba(88, 166, 255, 0.15); color: #79c0ff; border: 1px solid rgba(88,166,255,0.4); }
+.ai-badge.natural { background: rgba(63, 185, 80, 0.15); color: #7ee787; border: 1px solid rgba(63,185,80,0.4); }
 
 .ai-prob { font-size: 1.5rem; font-weight: 800; color: #c9d1d9; margin-bottom: 4px; }
 .ai-version { font-size: 0.7rem; color: #8b949e; }

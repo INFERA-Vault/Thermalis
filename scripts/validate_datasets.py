@@ -70,7 +70,7 @@ def validate():
             "record_count": len(df),
             "geometry_type": "Point (from lat/lon columns)",
             "crs": "EPSG:4326 (assumed)",
-            "date_range": f"{df['acq_date'].min()} to {df['acq_date'].max()}" if 'acq_date' in df.columns else "Unknown",
+            "date_range": f"{df['burn_date'].min()} to {df['burn_date'].max()}" if 'burn_date' in df.columns else "Unknown",
             "label_meaning": "WILDFIRE_REFERENCE",
             "important_attributes": list(df.columns),
             "limitations": "Tabular metadata only; polygons/images not downloaded. Represents only a subset (Asia)."

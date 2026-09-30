@@ -6,8 +6,13 @@ from sklearn.metrics import brier_score_loss
 # Load Model
 model = joblib.load('ml/models/model_a_calibrated.joblib')
 
-# Load Data
-df = pd.read_parquet('ml/datasets/candidate_training_dataset.parquet')
+# Load Data. The repository distribution includes a CSV fallback when the
+# generated Parquet artifact has not been produced yet.
+dataset_path = 'ml/datasets/candidate_training_dataset.parquet'
+if __import__('os').path.exists(dataset_path):
+    df = pd.read_parquet(dataset_path)
+else:
+    df = pd.read_csv('ml/datasets/candidate_training_dataset.csv')
 df = df[df['tier'] == 'TIER_A'].copy()
 df = df[df['target_label'].isin([0, 1])].copy()
 y_true = df['target_label'].astype(int)

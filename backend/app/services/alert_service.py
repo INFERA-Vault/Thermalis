@@ -12,6 +12,7 @@ from backend.app.models.alert import Alert, AlertType, AlertSeverity, AlertStatu
 from backend.app.services.features import FeatureEngineeringService
 from backend.app.api.classification import get_model
 from backend.app.services.email_service import EmailService
+from backend.app.services.emergency_dispatch import emergency_dispatch_service
 
 logger = logging.getLogger(__name__)
 
@@ -110,51 +111,64 @@ class AlertService:
                             
             except Exception as e:
                 logger.error(f"Error processing alerts for event {eid}: {e}")
-                
+
+        # Notify only newly-created HIGH alerts. Email is disabled by default and
+        # every attempt is recorded for operator visibility.
         from backend.app.core.config import settings
-        
-        # Process emails for newly created HIGH alerts
+
         for alert in new_alerts:
-            if alert.severity == AlertSeverity.HIGH and alert.notification_status == NotificationStatus.PENDING:
-                # Compile details for the email
-                event = db.query(ThermalEvent).filter(ThermalEvent.id == alert.thermal_event_id).first()
-                if not event:
-                    continue
-                    
-                details = {
-                    "detected_at": str(event.detected_at),
-                    "latitude": event.latitude,
-                    "longitude": event.longitude,
-                    "frp": event.frp,
-                    "brightness_temperature": event.brightness_temperature,
-                    "confidence": event.confidence,
-                    "model_probability": alert.model_probability
-                }
-                
-                if settings.ALERT_EMAIL_ENABLED:
-                    success = EmailService.send_alert_notification(
-                        alert_id=alert.id,
-                        event_id=alert.thermal_event_id,
-                        severity=alert.severity.value,
-                        alert_type=alert.alert_type.value,
-                        details=details
-                    )
-                    
-                    alert.notification_status = NotificationStatus.SENT if success else NotificationStatus.FAILED
-                    alert.notification_timestamp = datetime.datetime.utcnow()
-                    alert.notification_recipient = settings.ALERT_EMAIL_TO
-                    if not success:
-                        alert.notification_error = "SMTP transmission failed"
-                else:
-                    alert.notification_status = NotificationStatus.DISABLED
-                    alert.notification_timestamp = datetime.datetime.utcnow()
-                    
+            if alert.severity != AlertSeverity.HIGH or alert.notification_status != NotificationStatus.PENDING:
+                continue
+
+            event = db.query(ThermalEvent).filter(ThermalEvent.id == alert.thermal_event_id).first()
+            if not event:
+                continue
+
+            details = {
+                "detected_at": str(event.detected_at),
+                "latitude": event.latitude,
+                "longitude": event.longitude,
+                "frp": event.frp,
+                "brightness_temperature": event.brightness_temperature,
+                "confidence": event.confidence,
+                "model_probability": alert.model_probability,
+            }
+
+            if settings.ALERT_EMAIL_ENABLED:
+                success = EmailService.send_alert_notification(
+                    alert_id=alert.id,
+                    event_id=alert.thermal_event_id,
+                    severity=alert.severity.value,
+                    alert_type=alert.alert_type.value,
+                    details=details,
+                )
+                alert.notification_status = (
+                    NotificationStatus.SENT if success else NotificationStatus.FAILED
+                )
+                if not success:
+                    alert.notification_error = "SMTP transmission failed"
+                alert.notification_recipient = settings.ALERT_EMAIL_TO
+            else:
+                alert.notification_status = NotificationStatus.DISABLED
+
+            alert.notification_timestamp = datetime.datetime.utcnow()
+            try:
+                db.commit()
+                db.refresh(alert)
+            except Exception as e:
+                db.rollback()
+                logger.error(f"Failed to update alert notification status for {alert.id}: {e}")
+
+        # Emergency dispatch is independently configured and fail-closed. A
+        # provider failure is recorded by the dispatch service and must never
+        # prevent FIRMS ingestion or alert creation from completing.
+        for alert in new_alerts:
+            if alert.severity == AlertSeverity.HIGH:
                 try:
-                    db.commit()
+                    emergency_dispatch_service.dispatch_for_alert(db, alert)
                 except Exception as e:
-                    db.rollback()
-                    logger.error(f"Failed to update alert notification status for {alert.id}: {e}")
-                    
+                    logger.exception("Emergency dispatch orchestration failed for %s: %s", alert.id, e)
+
         return new_alerts
 
     def _create_alert_if_unique(
@@ -188,7 +202,11 @@ class AlertService:
             message=message,
             model_probability=model_probability,
             evidence_json=evidence_json,
-            notification_status=NotificationStatus.PENDING if severity == AlertSeverity.HIGH else NotificationStatus.NOT_APPLICABLE
+            notification_status=(
+                NotificationStatus.PENDING
+                if severity == AlertSeverity.HIGH
+                else NotificationStatus.NOT_APPLICABLE
+            ),
         )
         db.add(new_alert)
         try:

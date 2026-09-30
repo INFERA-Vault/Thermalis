@@ -53,15 +53,15 @@
             ]
         }
     },
-    "training_timestamp": "2026-09-28T11:13:42.717497+00:00",
-    "dataset_source_path": "ml/datasets/candidate_training_dataset.parquet",
+    "training_timestamp": "2026-09-30T22:14:38.855245+00:00",
+    "dataset_source_path": "ml/datasets/candidate_training_dataset.csv",
     "feature_importance_shap": {
-        "land_cover_at_event": 1.2127468585968018,
-        "day_night": 1.209977626800537,
-        "hotspot_frequency_30d": 1.0449274778366089,
-        "brightness_temperature": 0.9632059335708618,
-        "persistence_days": 0.4425019323825836,
-        "frp": 0.2959612309932709,
+        "day_night": 1.2244575023651123,
+        "land_cover_at_event": 1.203257441520691,
+        "hotspot_frequency_30d": 1.050967812538147,
+        "brightness_temperature": 0.9693614840507507,
+        "persistence_days": 0.4232139587402344,
+        "frp": 0.2536717355251312,
         "nearby_facility_count": 0.0,
         "is_built_up": 0.0,
         "recurrence_rate": 0.0
@@ -71,7 +71,7 @@
             "event_id": 20,
             "target_label": 1,
             "predicted": 0,
-            "prob": 0.19602043877897174,
+            "prob": 0.1960073156097432,
             "nearby_facility_count": 0,
             "hotspot_frequency_30d": 1,
             "persistence_days": 0.0,
@@ -80,13 +80,13 @@
             "day_night": "D",
             "land_cover_at_event": 40,
             "is_built_up": 0,
-            "recurrence_rate": 0.03333333333333333
+            "recurrence_rate": 0.0333333333333333
         },
         {
             "event_id": 283,
             "target_label": 1,
             "predicted": 0,
-            "prob": 0.4949742754742045,
+            "prob": 0.49497328318698236,
             "nearby_facility_count": 0,
             "hotspot_frequency_30d": 11,
             "persistence_days": 1.0013888888888889,
@@ -95,13 +95,13 @@
             "day_night": "D",
             "land_cover_at_event": 10,
             "is_built_up": 0,
-            "recurrence_rate": 0.36666666666666664
+            "recurrence_rate": 0.3666666666666666
         },
         {
             "event_id": 3881,
             "target_label": 1,
             "predicted": 0,
-            "prob": 0.47942996339487065,
+            "prob": 0.47942525382002976,
             "nearby_facility_count": 0,
             "hotspot_frequency_30d": 17,
             "persistence_days": 1.0569444444444445,
@@ -116,7 +116,7 @@
             "event_id": 5177,
             "target_label": 1,
             "predicted": 0,
-            "prob": 0.1829353974480314,
+            "prob": 0.1829325540119022,
             "nearby_facility_count": 0,
             "hotspot_frequency_30d": 8,
             "persistence_days": 1.0569444444444445,
@@ -125,13 +125,13 @@
             "day_night": "D",
             "land_cover_at_event": 40,
             "is_built_up": 0,
-            "recurrence_rate": 0.26666666666666666
+            "recurrence_rate": 0.2666666666666666
         },
         {
             "event_id": 5188,
             "target_label": 1,
             "predicted": 0,
-            "prob": 0.1863942253070089,
+            "prob": 0.1864126008420703,
             "nearby_facility_count": 0,
             "hotspot_frequency_30d": 8,
             "persistence_days": 1.0569444444444445,
@@ -140,7 +140,7 @@
             "day_night": "D",
             "land_cover_at_event": 40,
             "is_built_up": 0,
-            "recurrence_rate": 0.26666666666666666
+            "recurrence_rate": 0.2666666666666666
         }
     ],
     "calibration_performed": true,

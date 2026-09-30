@@ -104,7 +104,7 @@
         "record_count": 996,
         "geometry_type": "Point (from lat/lon columns)",
         "crs": "EPSG:4326 (assumed)",
-        "date_range": "Unknown",
+        "date_range": "2017-03-01 to 2020-09-30",
         "label_meaning": "WILDFIRE_REFERENCE",
         "important_attributes": [
             "event_id",

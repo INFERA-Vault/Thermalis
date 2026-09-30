@@ -133,10 +133,13 @@ def get_event_details(event_id: int, db: Session = Depends(get_db)):
     satellites = [{"platform": s.platform, "date": s.observation_date.isoformat(), "product_id": s.product_id} for s in sat_rows]
 
     feature_dict = dict(feature_row._mapping) if feature_row else None
-    if feature_dict and feature_dict.get('additional_features'):
-        extra = feature_dict['additional_features']
-        wc = extra.get('worldcover', {})
-        feature_dict['land_cover_at_event'] = wc.get('land_cover_class_name') or wc.get('land_cover_at_event')
+    if feature_dict and feature_dict.get("additional_features"):
+        extra = feature_dict["additional_features"]
+        worldcover = extra.get("worldcover", {})
+        feature_dict["land_cover_at_event"] = (
+            worldcover.get("land_cover_class_name")
+            or worldcover.get("land_cover_at_event")
+        )
 
     return {
         "event": dict(event_row._mapping),

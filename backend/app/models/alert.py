@@ -44,11 +44,16 @@ class Alert(Base):
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow, nullable=False)
     acknowledged_at = Column(DateTime, nullable=True)
     resolved_at = Column(DateTime, nullable=True)
-    
-    notification_status = Column(Enum(NotificationStatus), nullable=False, default=NotificationStatus.NOT_APPLICABLE, index=True)
+    notification_status = Column(
+        Enum(NotificationStatus),
+        nullable=False,
+        default=NotificationStatus.NOT_APPLICABLE,
+        index=True,
+    )
     notification_timestamp = Column(DateTime, nullable=True)
     notification_recipient = Column(String, nullable=True)
     notification_error = Column(String, nullable=True)
 
     # Relationships
     thermal_event = relationship("ThermalEvent")
+    dispatches = relationship("AlertDispatch", back_populates="alert", cascade="all, delete-orphan")

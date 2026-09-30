@@ -22,7 +22,6 @@ class AlertResponse(AlertBase):
     updated_at: datetime.datetime
     acknowledged_at: Optional[datetime.datetime] = None
     resolved_at: Optional[datetime.datetime] = None
-    
     notification_status: NotificationStatus
     notification_timestamp: Optional[datetime.datetime] = None
     notification_recipient: Optional[str] = None

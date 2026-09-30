@@ -1,4 +1,7 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
+const CONFIGURED_API_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(/\/$/, "");
+const API_URL = CONFIGURED_API_URL.endsWith("/api/v1")
+  ? CONFIGURED_API_URL
+  : `${CONFIGURED_API_URL}/api/v1`;
 
 export async function fetchEvents() {
   const res = await fetch(`${API_URL}/dashboard/events`);
@@ -23,6 +26,14 @@ export async function fetchClassification(eventId: number) {
     method: "POST"
   });
   if (!res.ok) throw new Error("Failed to classify event");
+  return res.json();
+}
+
+export async function fetchEvidenceAssessment(eventId: number) {
+  const res = await fetch(`${API_URL}/evidence/assess/${eventId}`, {
+    method: "POST"
+  });
+  if (!res.ok) throw new Error("Failed to build evidence assessment");
   return res.json();
 }
 
@@ -69,4 +80,38 @@ export async function resolveAlert(alertId: string) {
   const res = await fetch(`${API_URL}/alerts/${alertId}/resolve`, { method: "POST" });
   if (!res.ok) throw new Error("Failed to resolve alert");
   return res.json();
+}
+
+export async function fetchEmergencyStatus() {
+  const res = await fetch(`${API_URL}/emergency/status`);
+  if (!res.ok) throw new Error("Failed to fetch emergency dispatch status");
+  return res.json();
+}
+
+export async function dispatchEmergencyAlert(alertId: string, adminKey: string, force = false) {
+  const query = force ? "?force=true" : "";
+  const res = await fetch(`${API_URL}/emergency/dispatch/${alertId}${query}`, {
+    method: "POST",
+    headers: {
+      "X-Emergency-Admin-Key": adminKey,
+    },
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(body.detail || "Emergency dispatch request failed");
+  }
+  return body;
+}
+
+export async function fetchAlertDispatches(alertId: string, adminKey: string) {
+  const res = await fetch(`${API_URL}/emergency/dispatches/${alertId}`, {
+    headers: {
+      "X-Emergency-Admin-Key": adminKey,
+    },
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(body.detail || "Failed to fetch dispatch audit");
+  }
+  return body;
 }

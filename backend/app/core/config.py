@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     VERSION: str = "0.1.0"
     ENVIRONMENT: str = "development"
     DEBUG: Union[bool, None] = None
-    
+
     @field_validator("DEBUG", mode="before")
     @classmethod
     def set_debug_based_on_env(cls, v: Union[bool, str, None], info) -> bool:
@@ -24,7 +24,6 @@ class Settings(BaseSettings):
             return bool(v)
         env = info.data.get("ENVIRONMENT", "development")
         return env == "development"
-
     API_V1_PREFIX: str = "/api/v1"
 
     # Server Configuration
@@ -82,7 +81,7 @@ class Settings(BaseSettings):
     LIVE_REFRESH_COUNTRY_CODE: str = "IND"
     LIVE_REFRESH_SOURCE: str = "VIIRS_SNPP_NRT"
 
-    # Alert Email Configuration
+    # Alert email configuration
     ALERT_EMAIL_ENABLED: bool = False
     ALERT_EMAIL_TO: str = ""
     SMTP_HOST: str = ""
@@ -90,8 +89,19 @@ class Settings(BaseSettings):
     SMTP_USERNAME: str = ""
     SMTP_PASSWORD: str = ""
     SMTP_FROM: str = ""
-    
     FRONTEND_URL: str = "http://localhost:5173"
+
+    # Emergency dispatch is deliberately opt-in and fail-closed.
+    EMERGENCY_DISPATCH_ENABLED: bool = False
+    EMERGENCY_ADMIN_KEY: str = ""
+    EMERGENCY_MIN_SEVERITY: str = "HIGH"
+    EMERGENCY_DEFAULT_RADIUS_METERS: float = 5000.0
+    EMERGENCY_MAX_RECIPIENTS: int = 20
+    EMERGENCY_REQUEST_TIMEOUT_SECONDS: float = 10.0
+    TWILIO_ACCOUNT_SID: str = ""
+    TWILIO_AUTH_TOKEN: str = ""
+    TWILIO_FROM_PHONE: str = ""
+    TWILIO_API_BASE: str = "https://api.twilio.com/2010-04-01"
 
     model_config = SettingsConfigDict(
         env_file=".env",
