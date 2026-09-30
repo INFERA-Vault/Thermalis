@@ -44,7 +44,7 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_MAPTILER_API_KEY: ${VITE_MAPTILER_API_KEY}
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:8001}
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8001/api/v1}
     ports:
       - "8080:80"
     depends_on:
