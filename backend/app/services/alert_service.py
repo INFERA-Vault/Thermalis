@@ -8,9 +8,10 @@ import numpy as np
 from sqlalchemy import exc
 
 from backend.app.models.thermal_event import ThermalEvent
-from backend.app.models.alert import Alert, AlertType, AlertSeverity, AlertStatus
+from backend.app.models.alert import Alert, AlertType, AlertSeverity, AlertStatus, NotificationStatus
 from backend.app.services.features import FeatureEngineeringService
 from backend.app.api.classification import get_model
+from backend.app.services.email_service import EmailService
 
 logger = logging.getLogger(__name__)
 
@@ -110,6 +111,50 @@ class AlertService:
             except Exception as e:
                 logger.error(f"Error processing alerts for event {eid}: {e}")
                 
+        from backend.app.core.config import settings
+        
+        # Process emails for newly created HIGH alerts
+        for alert in new_alerts:
+            if alert.severity == AlertSeverity.HIGH and alert.notification_status == NotificationStatus.PENDING:
+                # Compile details for the email
+                event = db.query(ThermalEvent).filter(ThermalEvent.id == alert.thermal_event_id).first()
+                if not event:
+                    continue
+                    
+                details = {
+                    "detected_at": str(event.detected_at),
+                    "latitude": event.latitude,
+                    "longitude": event.longitude,
+                    "frp": event.frp,
+                    "brightness_temperature": event.brightness_temperature,
+                    "confidence": event.confidence,
+                    "model_probability": alert.model_probability
+                }
+                
+                if settings.ALERT_EMAIL_ENABLED:
+                    success = EmailService.send_alert_notification(
+                        alert_id=alert.id,
+                        event_id=alert.thermal_event_id,
+                        severity=alert.severity.value,
+                        alert_type=alert.alert_type.value,
+                        details=details
+                    )
+                    
+                    alert.notification_status = NotificationStatus.SENT if success else NotificationStatus.FAILED
+                    alert.notification_timestamp = datetime.datetime.utcnow()
+                    alert.notification_recipient = settings.ALERT_EMAIL_TO
+                    if not success:
+                        alert.notification_error = "SMTP transmission failed"
+                else:
+                    alert.notification_status = NotificationStatus.DISABLED
+                    alert.notification_timestamp = datetime.datetime.utcnow()
+                    
+                try:
+                    db.commit()
+                except Exception as e:
+                    db.rollback()
+                    logger.error(f"Failed to update alert notification status for {alert.id}: {e}")
+                    
         return new_alerts
 
     def _create_alert_if_unique(
@@ -142,7 +187,8 @@ class AlertService:
             title=title,
             message=message,
             model_probability=model_probability,
-            evidence_json=evidence_json
+            evidence_json=evidence_json,
+            notification_status=NotificationStatus.PENDING if severity == AlertSeverity.HIGH else NotificationStatus.NOT_APPLICABLE
         )
         db.add(new_alert)
         try:

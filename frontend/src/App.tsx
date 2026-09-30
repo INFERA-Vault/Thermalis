@@ -525,6 +525,21 @@ export default function App() {
                       <>
                         <div style={{fontSize: '0.85rem', fontWeight: 600, color: '#c9d1d9', marginBottom: 5}}>{a.title}</div>
                         <div style={{fontSize: '0.75rem', color: '#8b949e', marginBottom: 10}}>{a.message}</div>
+                        {a.severity === 'HIGH' && a.notification_status !== 'NOT_APPLICABLE' && (
+                          <div style={{fontSize: '0.7rem', color: '#8b949e', marginBottom: 10, display: 'flex', alignItems: 'center'}}>
+                            <span style={{marginRight: 6}}>Email:</span>
+                            <span style={{
+                              padding: '2px 6px',
+                              borderRadius: 4,
+                              background: 'rgba(255,255,255,0.1)',
+                              color: a.notification_status === 'SENT' ? '#3fb950' : 
+                                     a.notification_status === 'FAILED' ? '#ff7b72' : 
+                                     a.notification_status === 'DISABLED' ? '#8b949e' : '#eab308'
+                            }}>
+                              {a.notification_status || 'UNKNOWN'}
+                            </span>
+                          </div>
+                        )}
                         <div style={{display: 'flex', gap: 10}}>
                           {a.status === 'ACTIVE' && (
                             <button className="btn-classify" style={{background: '#eab308', color: '#000', padding: '4px 8px', display: 'flex', alignItems: 'center'}} onClick={() => handleAcknowledge(a.id)}>

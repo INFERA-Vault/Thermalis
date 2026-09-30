@@ -165,6 +165,7 @@ The goal was not just to show dots on a map. The system had to:
    ```
 2. **Environment Configuration:**
    Copy `.env.example` to `.env` and `frontend/.env.example` to `frontend/.env`. Update the placeholders with your API keys.
+   By default, the backend allows CORS for frontend ports 5173-5176. To support a different frontend port or production, set `CORS_ORIGINS` in your `.env`.
 3. **Database Setup:**
    Ensure PostgreSQL with PostGIS is running and credentials match the `.env` file (e.g., `DATABASE_URL=postgresql://user:pass@localhost:5432/infera`).
    Apply the database schema migrations:
