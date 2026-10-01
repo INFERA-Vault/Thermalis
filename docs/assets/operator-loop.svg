@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">Thermalis operator response loop</title>
+  <desc id="desc">An analyst inspects a thermal event, reviews evidence, manages the alert, and optionally escalates to verified recipients.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .accent { fill: #e8f8f1; stroke: #8ed5b4; stroke-width: 2; }
+      .warn { fill: #fff7e6; stroke: #edc778; stroke-width: 2; }
+      .title { font: 700 26px Arial, sans-serif; fill: #102a43; }
+      .step { font: 700 15px Arial, sans-serif; fill: #102a43; }
+      .small { font: 14px Arial, sans-serif; fill: #486581; }
+      .arrow { stroke: #486581; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#486581" />
+    </marker>
+  </defs>
+  <rect class="bg" width="1200" height="360" rx="20" />
+  <text class="title" x="40" y="48">Operator workflow: from hotspot to responsible action</text>
+  <rect class="card" x="40" y="105" width="205" height="150" rx="14" />
+  <text class="step" x="62" y="140">1  Detect</text>
+  <text class="small" x="62" y="169">FIRMS event appears</text>
+  <text class="small" x="62" y="191">on the GIS layer with</text>
+  <text class="small" x="62" y="213">time, location, FRP,</text>
+  <text class="small" x="62" y="235">and sensor confidence.</text>
+
+  <path class="arrow" d="M245 180 H285" />
+  <rect class="card" x="285" y="105" width="205" height="150" rx="14" />
+  <text class="step" x="307" y="140">2  Contextualize</text>
+  <text class="small" x="307" y="169">Inspect facilities,</text>
+  <text class="small" x="307" y="191">land cover, persistence,</text>
+  <text class="small" x="307" y="213">and available satellite</text>
+  <text class="small" x="307" y="235">metadata.</text>
+
+  <path class="arrow" d="M490 180 H530" />
+  <rect class="accent" x="530" y="105" width="205" height="150" rx="14" />
+  <text class="step" x="552" y="140">3  Assess</text>
+  <text class="small" x="552" y="169">Run TCEF-v1 and review</text>
+  <text class="small" x="552" y="191">coverage, priority,</text>
+  <text class="small" x="552" y="213">interpretation, and</text>
+  <text class="small" x="552" y="235">recommendation.</text>
+
+  <path class="arrow" d="M735 180 H775" />
+  <rect class="card" x="775" y="105" width="205" height="150" rx="14" />
+  <text class="step" x="797" y="140">4  Record</text>
+  <text class="small" x="797" y="169">Acknowledge, resolve,</text>
+  <text class="small" x="797" y="191">or keep the alert active</text>
+  <text class="small" x="797" y="213">with an auditable</text>
+  <text class="small" x="797" y="235">lifecycle.</text>
+
+  <path class="arrow" d="M980 180 H1020" />
+  <rect class="warn" x="1020" y="105" width="140" height="150" rx="14" />
+  <text class="step" x="1042" y="140">5  Escalate</text>
+  <text class="small" x="1042" y="169">Only to verified</text>
+  <text class="small" x="1042" y="191">recipients, when</text>
+  <text class="small" x="1042" y="213">enabled by an</text>
+  <text class="small" x="1042" y="235">operator.</text>
+  <text class="small" x="40" y="315">Every step keeps uncertainty visible; automated delivery never replaces agency procedures or human ownership.</text>
+</svg>
