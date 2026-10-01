@@ -6,7 +6,7 @@ Thermalis turns satellite thermal anomalies into explainable, map-based operatio
 
 > **Scope note:** Thermalis is a decision-support and triage platform. Its evidence score is not a calibrated probability of fire. Model A is deliberately limited to its documented reference classes, and emergency dispatch is disabled by default.
 
-![Thermalis system architecture](docs/assets/architecture.svg)
+![Thermalis technology approach](assets/readme/SIH26162_INFERA_Presentation_FINAL.pdf.png)
 
 ## Why this exists
 
@@ -32,9 +32,9 @@ NASA FIRMS can report a thermal anomaly, but a hotspot alone does not explain wh
 | Analyst workflow | MapLibre dashboard, event inspector, alert lifecycle, acknowledge and resolve actions |
 | Notifications | Configurable email notifications and fail-closed emergency dispatch to verified recipients |
 
-## System architecture
+## Technology approach
 
-![Thermalis data and intelligence flow](docs/assets/architecture.svg)
+The diagram above is the complete PS-162 approach: multi-source satellite and geospatial data is transformed into structured thermal events, evaluated through Model A and TCEF-v1, and surfaced as GIS-ready intelligence for analyst triage.
 
 The system is split into three practical layers:
 
