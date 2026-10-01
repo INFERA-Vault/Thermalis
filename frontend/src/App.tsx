@@ -170,7 +170,24 @@ export default function App() {
       pitch: 0
     });
 
-    m.on("load", () => {
+    let overlaysInitialized = false;
+    let fallbackActivated = !MAPTILER_API_KEY;
+
+    // A valid-looking provider key can still fail in the browser because of
+    // origin restrictions, quota, or a provider-side style/tile error. Keep
+    // the operational FIRMS and facility overlays usable in that case.
+    m.on("error", () => {
+      if (!fallbackActivated && !overlaysInitialized) {
+        fallbackActivated = true;
+        console.warn("MapTiler basemap failed; switching to the OSM fallback.");
+        m.setStyle(FALLBACK_MAP_STYLE);
+      }
+    });
+
+    const initializeOverlays = () => {
+      if (overlaysInitialized) return;
+      overlaysInitialized = true;
+
       // Add FIRMS Source
       m.addSource("firms", {
         type: "geojson",
@@ -292,7 +309,9 @@ export default function App() {
       m.on('mouseleave', 'firms-clusters', () => { m.getCanvas().style.cursor = ''; });
       m.on('mouseenter', 'firms-unclustered', () => { m.getCanvas().style.cursor = 'pointer'; });
       m.on('mouseleave', 'firms-unclustered', () => { m.getCanvas().style.cursor = ''; });
-    });
+    };
+
+    m.on("load", initializeOverlays);
 
     mapRef.current = m;
   }, [eventsData, facilitiesData]);
