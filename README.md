@@ -146,7 +146,7 @@ The goal was not just to show dots on a map. The system had to:
 
 ## Frontend User Guide
 
-1. Open `http://localhost:5173`.
+1. Open `http://localhost:8080` when using Docker Compose (`http://localhost:5173` for the Vite development server).
 2. **The Map:** Renders an English basemap with visual markers.
 3. **FIRMS Points:** Red dots represent individual thermal anomalies.
 4. **Numbered Clusters:** Large yellow/orange/red circles group points. Clicking a cluster zooms in to reveal the individual points.
@@ -156,9 +156,9 @@ The goal was not just to show dots on a map. The system had to:
 8. **Model A:** Inside the Event Inspector, view the classification prediction.
 9. **Alerts:** Use the bottom-left panel to view ACTIVE alerts. Click an alert to center the map on the event.
 10. **Acknowledge/Resolve:** Click the "Acknowledge" or "Resolve" button on an active alert inside the Event Inspector to update its status.
-11. **Refresh Data:** Click the "Refresh Data" button at the top to poll the NASA APIs live.
+11. **Refresh Data:** With `VITE_LIVE_REFRESH_ENABLED=true` and a valid `FIRMS_API_KEY`, click "Refresh Data" to poll NASA FIRMS live. Without that key, the dashboard starts in `DEMO` mode and uses the checked-in dataset without repeatedly calling a guaranteed-to-fail endpoint.
 12. **Success:** Data populates, maps are visible, and alerts change state smoothly.
-13. **Failure:** A red error badge will appear near the "LIVE" indicator if the backend fails to connect to NASA APIs.
+13. **Failure:** Provider or backend failures are shown near the status indicator with the provider's actionable error message.
 
 ## How to Run Locally
 
@@ -173,7 +173,7 @@ The goal was not just to show dots on a map. The system had to:
    cd frontend
    npm run dev -- --port 5173 --host
    ```
-   Requires `VITE_MAPTILER_API_KEY` in `frontend/.env`.
+   `VITE_MAPTILER_API_KEY` is optional for local demos; the frontend uses an attributed OpenStreetMap raster fallback when it is blank. Set `VITE_LIVE_REFRESH_ENABLED=true` only when `FIRMS_API_KEY` is configured.
 
 ### Optional sample data and email notifications
 
@@ -191,7 +191,7 @@ For the consolidated setup, deployment, migration, health-check, and operations 
 
 ## Current Test Results
 
-- **Backend container:** 49 passed, 1 skipped against the Compose PostGIS database.
+- **Backend container:** 50 passed against the Compose PostGIS database.
 - **Frontend Build:** TypeScript and Vite production build passed (1.28 MB JavaScript bundle before compression).
 - **Compose:** Database, backend, and frontend containers healthy; Alembic revision `a2f4c8e7d1b9` applied.
 - **API smoke tests:** Health, OpenAPI, GeoJSON events, GeoJSON facilities, and emergency-dispatch status passed.

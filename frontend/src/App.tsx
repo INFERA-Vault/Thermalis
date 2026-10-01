@@ -6,6 +6,7 @@ import { fetchEvents, fetchFacilities, fetchEventDetails, fetchClassification, f
 import { format } from "date-fns";
 
 const MAPTILER_API_KEY = (import.meta.env.VITE_MAPTILER_API_KEY || "").trim();
+const LIVE_REFRESH_CONFIGURED = import.meta.env.VITE_LIVE_REFRESH_ENABLED === "true";
 
 // MapTiler is preferred for production styling. The no-key fallback keeps the
 // operational overlays visible in local demos and judging environments where
@@ -63,7 +64,7 @@ export default function App() {
   const [layerOsm, setLayerOsm] = useState(true);
 
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
-  const [isLive, setIsLive] = useState(true);
+  const [isLive, setIsLive] = useState(LIVE_REFRESH_CONFIGURED);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshError, setRefreshError] = useState<string | null>(null);
   const [newEventsCount, setNewEventsCount] = useState<number>(0);
@@ -126,7 +127,10 @@ export default function App() {
       setRefreshError(null);
     } catch(err: any) {
       console.error("Error refreshing FIRMS data:", err);
-      setRefreshError(err.message || "Refresh failed");
+      const message = err.message || "Refresh failed";
+      setRefreshError(message.includes("NASA FIRMS API key")
+        ? "Demo mode: live FIRMS refresh requires FIRMS_API_KEY"
+        : message);
     } finally {
       refreshingRef.current = false;
       setRefreshing(false);
@@ -451,14 +455,14 @@ export default function App() {
           
           <div className="system-status" style={{cursor: 'pointer'}} onClick={() => setIsLive(!isLive)}>
             <div className={`status-dot ${isLive ? 'active' : 'inactive'}`}></div>
-            {isLive ? 'LIVE' : 'PAUSED'}
+            {isLive ? 'LIVE' : LIVE_REFRESH_CONFIGURED ? 'PAUSED' : 'DEMO'}
           </div>
 
           <div className="system-status" style={{fontSize: '0.75rem', color: '#8b949e'}}>
             {refreshError ? (
-              <span style={{color: '#ff7b72'}}><AlertCircle size={10} /> {refreshError} (Last: {lastRefresh ? format(lastRefresh, 'HH:mm:ss') : '--'})</span>
+              <span style={{color: refreshError.startsWith('Demo mode:') ? '#eab308' : '#ff7b72'}}><AlertCircle size={10} /> {refreshError} (Last: {lastRefresh ? format(lastRefresh, 'HH:mm:ss') : '--'})</span>
             ) : (
-              <span>Last update: {lastRefresh ? format(lastRefresh, 'HH:mm:ss') : '--'}</span>
+              <span>{isLive ? `Last update: ${lastRefresh ? format(lastRefresh, 'HH:mm:ss') : '--'}` : 'Demo dataset loaded · live FIRMS paused'}</span>
             )}
           </div>
 

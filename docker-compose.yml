@@ -64,6 +64,7 @@ services:
       args:
         VITE_MAPTILER_API_KEY: ${VITE_MAPTILER_API_KEY}
         VITE_API_URL: ${VITE_API_URL:-http://localhost:8001/api/v1}
+        VITE_LIVE_REFRESH_ENABLED: ${VITE_LIVE_REFRESH_ENABLED:-false}
     ports:
       - "8080:80"
     depends_on:

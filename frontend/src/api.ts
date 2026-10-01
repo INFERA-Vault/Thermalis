@@ -47,10 +47,11 @@ export async function refreshFirms() {
   const res = await fetch(`${API_URL}/firms/refresh`, {
     method: "POST"
   });
+  const body = await res.json().catch(() => ({}));
   if (!res.ok) {
-      throw new Error("Failed to refresh FIRMS data");
+      throw new Error(body.detail || body.details?.error || body.message || "Failed to refresh FIRMS data");
   }
-  return res.json();
+  return body;
 }
 
 export async function fetchAlerts(params?: { status?: string, severity?: string, alert_type?: string }) {
