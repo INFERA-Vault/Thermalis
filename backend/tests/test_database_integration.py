@@ -101,6 +101,10 @@ def test_firms_persistence_and_deduplication_live_db():
         assert duplicate_count == 1
 
         # Cleanup test record
+        from backend.app.models.alert import Alert
+        from backend.app.models.event_feature import EventFeature
+        session.query(Alert).filter(Alert.thermal_event_id == db_event.id).delete(synchronize_session=False)
+        session.query(EventFeature).filter(EventFeature.thermal_event_id == db_event.id).delete(synchronize_session=False)
         session.delete(db_event)
         session.commit()
 

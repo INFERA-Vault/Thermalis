@@ -14,6 +14,35 @@ SAMPLE_VIIRS_RESPONSE = """latitude,longitude,bright_ti4,scan,track,acq_date,acq
 """
 
 
+@pytest.fixture(autouse=True)
+def cleanup_test_events():
+    """Ensure mock events created during API tests are cleaned up from live DB."""
+    yield
+    from backend.app.core.database import SessionLocal
+    from backend.app.models.thermal_event import ThermalEvent
+    from backend.app.models.alert import Alert
+    from backend.app.models.event_feature import EventFeature
+    
+    db = SessionLocal()
+    try:
+        test_events = db.query(ThermalEvent).filter(
+            ThermalEvent.source_event_id.in_([
+                "firms_viirs_snpp_nrt_N_28.61390_77.20900_202603240530",
+                "firms_viirs_noaa20_nrt_N_28.61390_77.20900_202603240530",
+            ])
+        ).all()
+        if test_events:
+            ids = [e.id for e in test_events]
+            db.query(Alert).filter(Alert.thermal_event_id.in_(ids)).delete(synchronize_session=False)
+            db.query(EventFeature).filter(EventFeature.thermal_event_id.in_(ids)).delete(synchronize_session=False)
+            db.query(ThermalEvent).filter(ThermalEvent.id.in_(ids)).delete(synchronize_session=False)
+            db.commit()
+    except Exception:
+        db.rollback()
+    finally:
+        db.close()
+
+
 def test_firms_ingest_endpoint_validation_error_missing_area(client):
     """
     Test that request without bbox or country_code returns 422 Unprocessable Entity.
@@ -30,7 +59,7 @@ def test_firms_ingest_endpoint_validation_error_missing_area(client):
 
 
 @patch("backend.app.services.firms.FIRMSService.fetch_raw_data", new_callable=AsyncMock)
-def test_firms_ingest_endpoint_success_with_bbox(mock_fetch, client, ):
+def test_firms_ingest_endpoint_success_with_bbox(mock_fetch, client):
     """
     Test triggering FIRMS ingestion with a valid Bounding Box.
     """
@@ -59,7 +88,7 @@ def test_firms_ingest_endpoint_success_with_bbox(mock_fetch, client, ):
 
 
 @patch("backend.app.services.firms.FIRMSService.fetch_raw_data", new_callable=AsyncMock)
-def test_firms_ingest_endpoint_success_with_country(mock_fetch, client, ):
+def test_firms_ingest_endpoint_success_with_country(mock_fetch, client):
     """
     Test triggering FIRMS ingestion with a Country Code.
     """
@@ -80,7 +109,7 @@ def test_firms_ingest_endpoint_success_with_country(mock_fetch, client, ):
 
 
 @patch("backend.app.services.firms.FIRMSService.fetch_raw_data", new_callable=AsyncMock)
-def test_firms_refresh_endpoint_success(mock_fetch, client, ):
+def test_firms_refresh_endpoint_success(mock_fetch, client):
     """
     Test triggering FIRMS live refresh safely configured.
     """
@@ -103,3 +132,19 @@ def test_firms_refresh_endpoint_disabled(client):
     assert data["status"] == "failed"
     assert data["details"]["error"] == "Live refresh is disabled in configuration."
     settings.LIVE_REFRESH_ENABLED = True
+
+
+def test_firms_status_endpoint(client):
+    """
+    Test FIRMS live sync status endpoint.
+    """
+    response = client.get("/api/v1/firms/status")
+    assert response.status_code == 200
+    data = response.json()
+    assert "is_running" in data
+    assert "interval_seconds" in data
+    assert "day_range" in data
+    assert "source" in data
+    assert "last_sync_status" in data
+
+

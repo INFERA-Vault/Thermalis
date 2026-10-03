@@ -73,11 +73,16 @@ class Settings(BaseSettings):
     # Live Refresh Configuration
     LIVE_REFRESH_ENABLED: bool = True
     LIVE_REFRESH_INTERVAL_SECONDS: int = 60
+    LIVE_REFRESH_DAY_RANGE: int = 2
     LIVE_REFRESH_COUNTRY_CODE: str = "IND"
     LIVE_REFRESH_SOURCE: str = "VIIRS_SNPP_NRT"
+    LIVE_REFRESH_BBOX_MIN_LON: float = 68.0
+    LIVE_REFRESH_BBOX_MIN_LAT: float = 8.0
+    LIVE_REFRESH_BBOX_MAX_LON: float = 97.0
+    LIVE_REFRESH_BBOX_MAX_LAT: float = 37.0
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=("backend/.env", ".env"),
         env_file_encoding="utf-8",
         case_sensitive=True,
         extra="ignore",

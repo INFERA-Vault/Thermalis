@@ -13,6 +13,10 @@ from backend.app.core.exceptions import register_exception_handlers
 from backend.app.core.logging import logger, setup_logging
 
 
+import asyncio
+import os
+from typing import Optional
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
@@ -21,9 +25,29 @@ async def lifespan(app: FastAPI):
     # Startup
     setup_logging()
     logger.info("Starting %s v%s in [%s] mode...", settings.PROJECT_NAME, settings.VERSION, settings.ENVIRONMENT)
+
+    firms_task: Optional[asyncio.Task] = None
+    is_testing = (
+        settings.ENVIRONMENT.lower() in ("test", "testing")
+        or "PYTEST_CURRENT_TEST" in os.environ
+    )
+    if settings.LIVE_REFRESH_ENABLED and not is_testing:
+        from backend.app.services.firms_scheduler import run_periodic_firms_loop
+        firms_task = asyncio.create_task(run_periodic_firms_loop(), name="firms_background_ingestion")
+        logger.info("Spawned NASA FIRMS background ingestion task (interval: %ds)", settings.LIVE_REFRESH_INTERVAL_SECONDS)
+
     yield
+
     # Shutdown
     logger.info("Shutting down %s...", settings.PROJECT_NAME)
+    if firms_task and not firms_task.done():
+        logger.info("Stopping NASA FIRMS background ingestion task...")
+        firms_task.cancel()
+        try:
+            await firms_task
+        except asyncio.CancelledError:
+            pass
+        logger.info("NASA FIRMS background ingestion task stopped cleanly.")
 
 
 def create_application() -> FastAPI:

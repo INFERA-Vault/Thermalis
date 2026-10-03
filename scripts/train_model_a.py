@@ -17,7 +17,10 @@ def run_training():
     os.makedirs('ml/models', exist_ok=True)
     
     # 1. Load Data
-    df = pd.read_parquet('ml/datasets/candidate_training_dataset.parquet')
+    if os.path.exists('ml/datasets/candidate_training_dataset.parquet'):
+        df = pd.read_parquet('ml/datasets/candidate_training_dataset.parquet')
+    else:
+        df = pd.read_csv('ml/datasets/candidate_training_dataset.csv')
     df = df[df['tier'] == 'TIER_A'].copy()
     
     # Strictly filter labels just in case

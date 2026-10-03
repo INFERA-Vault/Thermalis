@@ -13,7 +13,16 @@ router = APIRouter()
 @router.get("/count", response_model=dict)
 def get_alert_count(db: Session = Depends(get_db)):
     active_count = db.query(Alert).filter(Alert.status == AlertStatus.ACTIVE).count()
-    return {"active_alerts": active_count}
+    ack_count = db.query(Alert).filter(Alert.status == AlertStatus.ACKNOWLEDGED).count()
+    resolved_count = db.query(Alert).filter(Alert.status == AlertStatus.RESOLVED).count()
+    total_count = db.query(Alert).count()
+    return {
+        "active_alerts": active_count,
+        "acknowledged_alerts": ack_count,
+        "resolved_alerts": resolved_count,
+        "total_alerts": total_count
+    }
+
 
 @router.get("/", response_model=List[AlertResponse])
 def get_alerts(

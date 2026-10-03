@@ -1,0 +1,321 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   THERMALIS — Professional Fire & Thermal Intelligence Design System
+   Visual Identity: Deep Charcoal Foundation + Scientific Thermal Progression
+   ========================================================================== */
+
+:root {
+  /* Surfaces & Backgrounds — Charcoal Foundation with Warm Bias */
+  --thermal-bg: #08090b;
+  --thermal-bg-elevated: #0c0e11;
+  --thermal-bg-subtle: #111318;
+  
+  --thermal-surface: #14171b;
+  --thermal-surface-hover: #181b20;
+  --thermal-surface-elevated: #1d2025;
+
+  /* Borders — Dark Neutral Gray with Subtle Warm Bias */
+  --thermal-border: #262322;
+  --thermal-border-subtle: #1f1d1c;
+  --thermal-border-light: #383330;
+  --thermal-border-active: #ff5a00;
+
+  /* Typography */
+  --thermal-text: #f4f4f5;
+  --thermal-text-muted: #94908d;
+  --thermal-text-dim: #686360;
+
+  /* Primary Fire Progression Palette (Red -> Orange -> Amber -> Gold -> Yellow) */
+  --fire-red: #ff0000;
+  --fire-orange: #ff5a00;
+  --fire-amber: #ff9f00;
+  --fire-gold: #ffd000;
+  --fire-yellow: #ffe500;
+
+  /* Supporting Deep Fire Tones */
+  --fire-deep-wine: #611511;
+  --fire-deep-crimson: #9a0000;
+  --fire-deep-rust: #b62602;
+  --fire-deep-blaze: #e74d02;
+  --fire-warm-amber: #fcb42c;
+
+  /* Semantic Severity System */
+  --severity-low: #fcb42c;
+  --severity-medium: #ff9f00;
+  --severity-high: #e74d02;
+  --severity-critical: #ff0000;
+
+  /* Refined Gradient System (Used as Accents) */
+  --fire-gradient-primary: linear-gradient(
+    90deg,
+    #ff0000 0%,
+    #ff5a00 25%,
+    #ff9f00 50%,
+    #ffd000 75%,
+    #ffe500 100%
+  );
+
+  --fire-gradient-deep: linear-gradient(
+    135deg,
+    #611511 0%,
+    #9a0000 25%,
+    #b62602 45%,
+    #e74d02 65%,
+    #ff5a00 85%,
+    #ff9f00 100%
+  );
+
+  --fire-gradient-accent: linear-gradient(
+    135deg,
+    rgba(182, 38, 2, 0.45) 0%,
+    rgba(231, 77, 2, 0.3) 60%,
+    rgba(255, 90, 0, 0.2) 100%
+  );
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace, Consolas;
+
+  /* Workstation Layout Dimensions & Safe Areas */
+  --header-height: 44px;
+  --status-height: 24px;
+  --timeline-height: 84px;
+  --map-safe-bottom: calc(var(--status-height) + var(--timeline-height));
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--thermal-bg);
+  color: var(--thermal-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Minimal Scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--thermal-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--thermal-border-light);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fire-deep-blaze);
+}
+
+/* Dedicated Alerts Drawer Scrollbar */
+.alerts-scroll-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #383330 rgba(12, 14, 17, 0.5);
+}
+
+.alerts-scroll-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.alerts-scroll-container::-webkit-scrollbar-track {
+  background: rgba(12, 14, 17, 0.5);
+  border-radius: 3px;
+}
+
+.alerts-scroll-container::-webkit-scrollbar-thumb {
+  background: #383330;
+  border-radius: 3px;
+}
+
+.alerts-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #4a4440;
+}
+
+/* Dedicated Object Inspector Scrollbar */
+.inspector-scroll-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #383330 rgba(12, 14, 17, 0.5);
+}
+
+.inspector-scroll-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.inspector-scroll-container::-webkit-scrollbar-track {
+  background: rgba(12, 14, 17, 0.5);
+  border-radius: 3px;
+}
+
+.inspector-scroll-container::-webkit-scrollbar-thumb {
+  background: #383330;
+  border-radius: 3px;
+}
+
+.inspector-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #4a4440;
+}
+
+
+
+/* MapLibre Canvas Container Full Height & Width */
+.maplibregl-map {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute !important;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.maplibregl-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
+.maplibregl-canvas-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.maplibregl-ctrl-bottom-right {
+  bottom: 4px !important;
+  right: 8px !important;
+  z-index: 10 !important;
+}
+.maplibregl-ctrl-attrib {
+  background: rgba(20, 23, 27, 0.88) !important;
+  color: var(--thermal-text-dim) !important;
+  font-size: 9px !important;
+  padding: 1px 6px !important;
+  border-radius: 2px !important;
+  border: 1px solid var(--thermal-border) !important;
+  font-family: var(--font-sans) !important;
+}
+.maplibregl-ctrl-attrib a {
+  color: var(--thermal-text-muted) !important;
+  text-decoration: none !important;
+}
+.maplibregl-ctrl-attrib a:hover {
+  color: var(--fire-orange) !important;
+  text-decoration: underline !important;
+}
+
+/* Typography Helpers */
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Professional GIS Panels — Dark charcoal surfaces, subtle warm borders */
+.gis-panel {
+  background: var(--thermal-surface);
+  border: 1px solid var(--thermal-border);
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.gis-docked {
+  background: var(--thermal-surface);
+  border-color: var(--thermal-border);
+}
+
+/* Professional Restrained GIS Buttons */
+.gis-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--thermal-text-muted);
+  background: var(--thermal-surface);
+  border: 1px solid var(--thermal-border);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 120ms ease;
+  user-select: none;
+  white-space: nowrap;
+}
+.gis-button:hover {
+  color: var(--thermal-text);
+  background: var(--thermal-surface-hover);
+  border-color: var(--thermal-border-light);
+}
+.gis-button.active {
+  color: #ffffff;
+  background: var(--fire-gradient-accent);
+  border-color: var(--fire-orange);
+  box-shadow: 0 1px 6px rgba(255, 90, 0, 0.25);
+}
+
+/* Status Indicator Dot */
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.status-dot-green {
+  background-color: #10b981;
+}
+.status-dot-amber {
+  background-color: var(--fire-amber);
+}
+.status-dot-orange {
+  background-color: var(--fire-orange);
+}
+.status-dot-red {
+  background-color: var(--fire-red);
+}
+
+/* MapLibre Popup Styling */
+.maplibregl-popup-content {
+  background: var(--thermal-surface) !important;
+  color: var(--thermal-text) !important;
+  border: 1px solid var(--thermal-border) !important;
+  border-radius: 3px !important;
+  padding: 6px 10px !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7) !important;
+  font-family: var(--font-sans) !important;
+}
+.maplibregl-popup-tip {
+  border-top-color: var(--thermal-surface) !important;
+  border-bottom-color: var(--thermal-surface) !important;
+}
+.maplibregl-popup-close-button {
+  color: var(--thermal-text-dim) !important;
+  padding: 2px 6px !important;
+  font-size: 13px !important;
+}
+.maplibregl-popup-close-button:hover {
+  color: var(--fire-orange) !important;
+  background: transparent !important;
+}
+
+/* Primary Fire Gradient Utility */
+.fire-gradient-bar {
+  background: var(--fire-gradient-primary);
+}
+
+.fire-gradient-deep-bar {
+  background: var(--fire-gradient-deep);
+}

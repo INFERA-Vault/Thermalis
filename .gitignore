@@ -1,151 +1,75 @@
 # ==========================================
-# Environments & Virtual Environments
+# Node Dependencies & Build Outputs
+# ==========================================
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+dist-ssr/
+frontend/dist-ssr/
+*.local
+
+# ==========================================
+# Environment Variables & Secrets
 # ==========================================
 .env
 .env.*
 !.env.example
-.venv/
-venv/
-ENV/
-env/
-env.bak/
-venv.bak/
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
 
 # ==========================================
-# Python Artifacts & Cache
+# Python Artifacts & Test Caches
 # ==========================================
 __pycache__/
+backend/**/__pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
 .pytest_cache/
+backend/.pytest_cache/
+.mypy_cache/
+.cache/
+coverage/
 .coverage
 .coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
 
 # ==========================================
-# Frontend & Node Artifacts
-# ==========================================
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-.pnpm-debug.log*
-lerna-debug.log*
-.next/
-out/
-.nuxt/
-dist/
-dist-ssr/
-*.local
-
-# ==========================================
-# Large Geospatial, Satellite & Raw Data
+# Large Geospatial & ML Checkpoints
 # ==========================================
 data/raw/*
 !data/raw/**/.gitkeep
 data/processed/*
 !data/processed/**/.gitkeep
-
-# Raster, Satellite, and Vector formats
-*.tif
-*.tiff
-*.geotiff
-*.nc
-*.nc4
-*.hdf
-*.hdf5
-*.h5
-*.jp2
-*.SAFE/
-*.zip
-*.tar.gz
-*.tgz
-*.gz
-*.bz2
-*.7z
-*.gpkg
-*.shp
-*.shx
-*.dbf
-*.prj
-*.cpg
-*.geojson
-*.kml
-*.kmz
-*.parquet
-*.feather
-*.csv.gz
-
-# ==========================================
-# Machine Learning Weights & Checkpoints
-# ==========================================
 ml/models/*
-*.pt
-*.pth
-*.onnx
-*.pkl
-*.pickle
-*.joblib
-*.bin
-*.model
-*.ckpt
-*.weights
-*.pb
 !ml/models/**/.gitkeep
 !ml/models/model_a_calibrated.joblib
 !ml/models/model_a_metadata.json
 checkpoints/
-wandb/
-runs/
-lightning_logs/
-.tensorboard/
 
 # ==========================================
-# Logs, Temp & Generated Outputs
+# Browser Automation & Debug Artifacts
 # ==========================================
+.chrome-*/
+screenshot_*.png
+screenshot.png
+screenshot_*.jpg
 *.log
 logs/
-*.tmp
-*.temp
 tmp/
 temp/
-outputs/
-/reports/
-!docs/reports/
 
 # ==========================================
-# OS & IDE Files
+# OS & Editor Files
 # ==========================================
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
+ehthumbs.db
 [Dd]esktop.ini
 .idea/
 .vscode/*
@@ -153,5 +77,6 @@ Thumbs.db
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-*.sublime-workspace
-*.sublime-project
+
+.vite/
+frontend/.vite/
