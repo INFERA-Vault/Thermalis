@@ -6,6 +6,7 @@ Handles downloading, parsing, validating, normalizing, deduplicating, and persis
 import csv
 from datetime import datetime, timezone
 import io
+import asyncio
 from typing import List, Optional, Set, Tuple
 import httpx
 from sqlalchemy.orm import Session
@@ -340,27 +341,39 @@ class FIRMSService:
         # 4. Persist to Database if session available
         persisted_count = 0
         new_event_ids = []
-        if db is not None and unique_records:
+        unique_ids = {r.source_event_id for r in unique_records}
+        duplicate_source_ids = [r.source_event_id for r in valid_records if r.source_event_id not in unique_ids]
+
+        if db is not None:
             try:
-                orm_events = self.to_thermal_events(unique_records)
-                db.add_all(orm_events)
-                db.commit()
-                
-                # Fetch back to get IDs
-                for event in orm_events:
-                    db.refresh(event)
-                    new_event_ids.append(event.id)
+                if unique_records:
+                    orm_events = self.to_thermal_events(unique_records)
+                    db.add_all(orm_events)
+                    db.commit()
                     
-                persisted_count = len(orm_events)
-                logger.info("Persisted %d new ThermalEvent records to database", persisted_count)
+                    # Fetch back to get IDs
+                    for event in orm_events:
+                        db.refresh(event)
+                        new_event_ids.append(event.id)
+                        
+                    persisted_count = len(orm_events)
+                    logger.info("Persisted %d new ThermalEvent records to database", persisted_count)
                 
-                # 5. Generate Alerts
+                # 5. Alert Processing & Expiry Lifecycle
+                from backend.app.services.alert_service import AlertService
+                alert_svc = AlertService()
+
                 if new_event_ids:
-                    from backend.app.services.alert_service import AlertService
-                    alert_svc = AlertService()
-                    alerts = alert_svc.process_new_events(db, new_event_ids)
+                    alerts = await asyncio.to_thread(alert_svc.process_new_events, db, new_event_ids)
                     logger.info("Generated %d alerts for %d new events", len(alerts), len(new_event_ids))
-                    
+
+                if duplicate_source_ids:
+                    touched = await asyncio.to_thread(alert_svc.touch_existing_events, db, duplicate_source_ids)
+                    if touched > 0:
+                        logger.info("Refreshed activity window for %d alerts on existing events", touched)
+
+                await asyncio.to_thread(alert_svc.expire_stale_alerts, db)
+
             except Exception as exc:
                 logger.error("Failed to persist ThermalEvents to database: %s", exc)
                 db.rollback()
@@ -379,3 +392,4 @@ class FIRMSService:
                 "db_persisted": persisted_count > 0
             }
         )
+

@@ -27,6 +27,7 @@ class WorldCoverService:
         # 0.009 degrees is roughly 1000m near the equator
         self.buffer_degrees = buffer_degrees
         self.base_url = "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/"
+        self._cache: Dict[tuple, Dict[str, Any]] = {}
     
     def _get_tile_name(self, lat: float, lon: float) -> str:
         """Calculate the 3x3 degree tile name for ESA WorldCover."""
@@ -40,6 +41,9 @@ class WorldCoverService:
 
     def extract_features(self, lat: float, lon: float) -> Dict[str, Any]:
         """Extract land cover features around a point using remote streaming (vsicurl)."""
+        cache_key = (round(lat, 2), round(lon, 2))
+        if cache_key in self._cache:
+            return dict(self._cache[cache_key])
         tile_name = self._get_tile_name(lat, lon)
         filename = f"ESA_WorldCover_10m_2021_v200_{tile_name}_Map.tif"
         url = self.base_url + filename
@@ -94,6 +98,7 @@ class WorldCoverService:
             features["error"] = str(e)
             logger.error(f"Error reading WorldCover data: {str(e)}")
             
+        self._cache[cache_key] = features
         return features
 
 worldcover_service = WorldCoverService()

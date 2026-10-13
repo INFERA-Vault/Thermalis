@@ -212,7 +212,7 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
 
   if (!isOpen) return null;
 
-  const activeCount = counts?.active_alerts ?? (statusFilter === 'ACTIVE' ? alerts.length : 726);
+  const activeCount = counts?.active_alerts ?? (statusFilter === 'ACTIVE' ? alerts.length : 0);
 
   return (
     <div 
@@ -305,14 +305,15 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
         <div className="px-3.5 py-2 border-b border-[#262322] bg-[#0C0E11]/60 flex flex-col gap-1.5 shrink-0">
           {/* Filter Tabs */}
           <div className="flex items-center justify-between gap-1 text-xs">
-            {(['ACTIVE', 'ACKNOWLEDGED', 'RESOLVED', 'ALL'] as const).map(st => {
+            {(['ACTIVE', 'ACKNOWLEDGED', 'RESOLVED', 'EXPIRED', 'ALL'] as const).map(st => {
               const isSelected = statusFilter === st;
-              const displayLabel = st === 'ACKNOWLEDGED' ? 'ACK' : st;
+              const displayLabel = st === 'ACKNOWLEDGED' ? 'ACK' : st === 'EXPIRED' ? 'EXP' : st;
               let countVal: number | undefined;
               if (counts) {
                 if (st === 'ACTIVE') countVal = counts.active_alerts;
                 else if (st === 'ACKNOWLEDGED') countVal = counts.acknowledged_alerts;
                 else if (st === 'RESOLVED') countVal = counts.resolved_alerts;
+                else if (st === 'EXPIRED') countVal = counts.expired_alerts;
                 else if (st === 'ALL') countVal = counts.total_alerts;
               }
               return (
@@ -322,7 +323,7 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
                   active={isSelected}
                   variant={isSelected ? 'fire-active' : 'default'}
                   onClick={() => setStatusFilter(st)}
-                  className="text-[10px] py-0.5 px-2 flex-1"
+                  className="text-[10px] py-0.5 px-1.5 flex-1"
                 >
                   <span>{displayLabel}</span>
                   {countVal !== undefined && (
@@ -338,7 +339,7 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
           {/* Compact Metrics Breakdown */}
           {counts && (
             <div 
-              className="flex items-center justify-between px-2 py-1 bg-[#111317] border border-[#1F2227] rounded text-[9.5px] font-mono text-[#8C8885]"
+              className="flex items-center justify-between px-2 py-1 bg-[#111317] border border-[#1F2227] rounded text-[9px] font-mono text-[#8C8885]"
               title="Alert status distribution across operational records"
             >
               <span>ACTIVE <strong className="text-[#EF4444] font-semibold">{counts.active_alerts}</strong></span>
@@ -346,6 +347,8 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
               <span>ACK <strong className="text-[#FF9F00] font-semibold">{counts.acknowledged_alerts ?? 0}</strong></span>
               <span className="text-[#383330]">|</span>
               <span>RESOLVED <strong className="text-emerald-400 font-semibold">{counts.resolved_alerts ?? 0}</strong></span>
+              <span className="text-[#383330]">|</span>
+              <span>EXP <strong className="text-[#71717A] font-semibold">{counts.expired_alerts ?? 0}</strong></span>
               <span className="text-[#383330]">|</span>
               <span>TOTAL <strong className="text-[#F4F4F5] font-semibold">{counts.total_alerts ?? 0}</strong></span>
             </div>

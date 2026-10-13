@@ -20,7 +20,18 @@ class AlertResponse(AlertBase):
     status: AlertStatus
     created_at: datetime.datetime
     updated_at: datetime.datetime
+    last_seen_at: Optional[datetime.datetime] = None
+    expires_at: Optional[datetime.datetime] = None
     acknowledged_at: Optional[datetime.datetime] = None
     resolved_at: Optional[datetime.datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class AlertCountResponse(BaseModel):
+    active_alerts: int
+    acknowledged_alerts: int = 0
+    resolved_alerts: int = 0
+    expired_alerts: int = 0
+    total_alerts: int
+

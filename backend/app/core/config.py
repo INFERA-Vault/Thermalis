@@ -81,6 +81,10 @@ class Settings(BaseSettings):
     LIVE_REFRESH_BBOX_MAX_LON: float = 97.0
     LIVE_REFRESH_BBOX_MAX_LAT: float = 37.0
 
+    # Alert Lifecycle & Recency Configuration
+    ALERT_ACTIVE_WINDOW_HOURS: int = 24  # Rolling window in hours during which an alert condition is considered active
+    ALERT_AUTO_EXPIRE_ENABLED: bool = True  # Automatically transition stale active alerts to EXPIRED
+
     model_config = SettingsConfigDict(
         env_file=("backend/.env", ".env"),
         env_file_encoding="utf-8",

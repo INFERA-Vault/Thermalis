@@ -130,7 +130,7 @@ export interface ModelAPredictionResponse {
 
 // Alerts (GET /api/v1/alerts/)
 export type AlertSeverity = 'LOW' | 'MEDIUM' | 'HIGH';
-export type AlertStatus = 'ACTIVE' | 'ACKNOWLEDGED' | 'RESOLVED';
+export type AlertStatus = 'ACTIVE' | 'ACKNOWLEDGED' | 'RESOLVED' | 'EXPIRED';
 export type AlertType = 'NEW_THERMAL_ANOMALY' | 'INDUSTRIAL_HEAT_SOURCE_ALERT' | 'PERSISTENT_THERMAL_ACTIVITY' | string;
 
 export interface AlertItem {
@@ -145,6 +145,8 @@ export interface AlertItem {
   evidence_json?: Record<string, any> | null;
   created_at: string;
   updated_at: string;
+  last_seen_at?: string | null;
+  expires_at?: string | null;
   acknowledged_at?: string | null;
   resolved_at?: string | null;
 }
@@ -153,6 +155,7 @@ export interface AlertCountResponse {
   active_alerts: number;
   acknowledged_alerts?: number;
   resolved_alerts?: number;
+  expired_alerts?: number;
   total_alerts?: number;
 }
 

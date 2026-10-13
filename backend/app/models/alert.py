@@ -18,6 +18,7 @@ class AlertStatus(str, enum.Enum):
     ACTIVE = "ACTIVE"
     ACKNOWLEDGED = "ACKNOWLEDGED"
     RESOLVED = "RESOLVED"
+    EXPIRED = "EXPIRED"
 
 class Alert(Base):
     __tablename__ = "alerts"
@@ -35,6 +36,8 @@ class Alert(Base):
     
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow, nullable=False)
+    last_seen_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=True, index=True)
+    expires_at = Column(DateTime, nullable=True, index=True)
     acknowledged_at = Column(DateTime, nullable=True)
     resolved_at = Column(DateTime, nullable=True)
 
